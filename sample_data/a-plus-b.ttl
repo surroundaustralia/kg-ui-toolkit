@@ -1,0 +1,80 @@
+@prefix mydata: <http://example.com/data/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix sdo:    <https://schema.org/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ex:     <http://example.org/> .
+@prefix geo:    <http://www.opengis.net/ont/geosparql#> .
+@prefix sf:     <http://www.opengis.net/ont/sf#> .
+
+
+<http://example.com/activities/add1>
+    a                      prov:Activity ;
+    rdfs:label             "Adder-run1" ;
+    prov:endedAtTime       "2029-01-01T22:05:19+02:00"^^xsd:dateTime ;
+    prov:generated         mydata:c ;
+    prov:used              mydata:a, mydata:b ;
+    prov:wasAssociatedWith <http://example.com/agents/adder> .
+
+mydata:a
+    a          prov:Entity ;
+    rdfs:label "A" ;
+    sdo:value  1
+.
+
+mydata:b
+    a          prov:Entity ;
+    rdfs:label "B" ;
+    sdo:value  2
+.
+
+mydata:c
+    a               <http://example.com/data/results/c> ;
+    geo:hasGeometry [ geo:asWKT """POLYGON ((145.7980912435849 -16.963468764611335, 145.77490738533515 -16.99606979105522, 145.78325643335808 -17.012702188581343, 145.80598317490836 -17.004940851013075, 145.8127093841003 -16.98697722928452, 145.81121035146873 -16.96947380598681, 145.7980912435849 -16.963468764611335))"""^^geo:wktLiteral ;
+                        geo:asGeoJSON """ {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              145.7980912435849,
+              -16.963468764611335
+            ],
+            [
+              145.77490738533515,
+              -16.99606979105522
+            ],
+            [
+              145.78325643335808,
+              -17.012702188581343
+            ],
+            [
+              145.80598317490836,
+              -17.004940851013075
+            ],
+            [
+              145.8127093841003,
+              -16.98697722928452
+            ],
+            [
+              145.81121035146873,
+              -16.96947380598681
+            ],
+            [
+              145.7980912435849,
+              -16.963468764611335
+            ]
+          ]
+        ]
+      }"""^^geo:geoJSONLiteral
+                    ];
+
+    rdfs:label "C" ;
+    sdo:value  3 ;
+    prov:wasDerivedFrom mydata:a, mydata:b ;
+    prov:wasGeneratedBy <http://example.com/activities/add1> .
+
+<http://example.com/agents/adder>
+    a               prov:Agent ;
+    rdfs:label      "Add" ;
+    sdo:description "Adds all input values"
+.

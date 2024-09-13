@@ -1,0 +1,18 @@
+[package]
+name = "kg-ui-toolkit"
+version = "0.1.0"
+edition = "2021"
+description = "Reusable components of the Rust toolkit for reuse in applications"
+readme = "README.md"
+
+[dependencies]
+geo = { workspace = true }
+geo-svg = { workspace = true }
+geojson = { workspace = true, features = ["geo-types"] }
+gloo-dialogs = { workspace = true }
+gloo-net = { workspace = true }
+implicit-clone = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+web-sys = { workspace = true }
+yew = { workspace = true, features = ["csr"] }

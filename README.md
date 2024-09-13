@@ -14,3 +14,8 @@ Reusable components of the Rust toolkit for reuse in applications
   - collection (parent container) navigation - find out more about the object from its container - if known.  (NB the object property to define the container will vary from type to type)
 3. simple Map based search and display - with object display on click on map or tabular view of results
 4. More functions TBD.
+
+## Usage
+
+The project is intended to be used as a git-submodule from within the UI project. It is also expected to be
+used as a Cargo workspace member.

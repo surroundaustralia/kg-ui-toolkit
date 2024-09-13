@@ -1,0 +1,256 @@
+{
+  "head": {
+    "vars": [
+      "A",
+      "p",
+      "plabel",
+      "o",
+      "olabel"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#Activity"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "Activity"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#influenced"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "influenced"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/data/c"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "C"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#generated"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "generated"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/data/c"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "C"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#used"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "used"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/data/a"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "A"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#wasInfluencedBy"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "wasInfluencedBy"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/data/a"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "A"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#used"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "used"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/data/b"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "B"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#wasInfluencedBy"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "wasInfluencedBy"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/data/b"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "B"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#wasInfluencedBy"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "wasInfluencedBy"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/agents/adder"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "Add"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#wasAssociatedWith"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "wasAssociatedWith"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/agents/adder"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "Add"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/2000/01/rdf-schema#label"
+        },
+        "o": {
+          "type": "literal",
+          "value": "Adder-run1"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      },
+      {
+        "A": {
+          "type": "uri",
+          "value": "http://example.com/activities/add1"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#endedAtTime"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "endedAtTime"
+        },
+        "o": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2029-01-01T22:05:19+02:00"
+        }
+      }
+    ]
+  }
+}
