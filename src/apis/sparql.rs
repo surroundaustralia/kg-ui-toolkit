@@ -194,7 +194,7 @@ mod test {
     #[test]
     fn test_deser_q1() {
         let mut f = fs::File::open(format!(
-            "{}/../sample_data/q1.json",
+            "{}/sample_data/q1.json",
             env!("CARGO_MANIFEST_DIR")
         ))
         .unwrap();
@@ -212,7 +212,7 @@ mod test {
     #[test]
     fn test_deser_q2() {
         let mut f = fs::File::open(format!(
-            "{}/../sample_data/q2.json",
+            "{}/sample_data/q2.json",
             env!("CARGO_MANIFEST_DIR")
         ))
         .unwrap();
