@@ -1,0 +1,29 @@
+{
+  "head": {
+    "vars": [
+      "entity",
+      "label",
+      "geojson",
+      "wkt"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "entity": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "label": {
+          "type": "literal",
+          "value": "Path A"
+        },
+        "geojson": {
+          "datatype": "http://www.opengis.net/ont/geosparql#geoJSONLiteral",
+          "type": "literal",
+          "value": "{\n        \"coordinates\": [\n          [\n            145.78076917651157,\n            -16.902133432722124\n          ],\n          [\n            145.87159104353117,\n            -16.83228182748823\n          ],\n          [\n            145.9873351627084,\n            -16.85797537575563\n          ],\n          [\n            145.96665082383618,\n            -16.931567252341438\n          ],\n          [\n            145.97267745053028,\n            -16.968126465319628\n          ],\n          [\n            146.0258554346122,\n            -16.9541957104595\n          ]\n        ],\n        \"type\": \"LineString\"\n      }"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "head": {
+    "vars": [
+      "object",
+      "p",
+      "plabel",
+      "o",
+      "olabel"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://www.w3.org/2002/07/owl#Thing"
+        }
+      },
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#Entity"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "Entity"
+        }
+      },
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/2000/01/rdf-schema#label"
+        },
+        "o": {
+          "type": "literal",
+          "value": "Path A"
+        }
+      },
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#wasGeneratedBy"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "wasGeneratedBy"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/activities/router-q1"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "Router-q1"
+        }
+      },
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/ns/prov#wasInfluencedBy"
+        },
+        "plabel": {
+          "type": "literal",
+          "value": "wasInfluencedBy"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/activities/router-q1"
+        },
+        "olabel": {
+          "type": "literal",
+          "value": "Router-q1"
+        }
+      },
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.com/data/auv/Path"
+        }
+      },
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://demo.org/dimensions/hasDimValues"
+        },
+        "o": {
+          "type": "uri",
+          "value": "http://example.org/assessmentPathA"
+        }
+      },
+      {
+        "object": {
+          "type": "uri",
+          "value": "http://example.com/data/pathA"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.opengis.net/ont/geosparql#hasGeometry"
+        },
+        "o": {
+          "type": "bnode",
+          "value": "anon-genid-0e106682eeef41a59fc2cddd67b3959b-0"
+        }
+      }
+    ]
+  }
+}
