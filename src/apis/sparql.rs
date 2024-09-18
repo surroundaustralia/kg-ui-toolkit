@@ -1,6 +1,6 @@
 use gloo_net::http::Request;
-use implicit_clone::unsync::IString;
-use std::{collections::HashMap, rc::Rc};
+use implicit_clone::unsync::{IArray, IString};
+use std::rc::Rc;
 
 use geojson::GeoJson;
 
@@ -142,6 +142,7 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
         });
 
     models::Entity {
+        geometry: None,
         label: s.label,
         value: s.value,
         value_label: s.value_label,
@@ -153,7 +154,7 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
 
 pub fn spatial_entities_from_response(
     response: Response<SpatialEntityBinding>,
-) -> HashMap<IString, models::SpatialEntity> {
+) -> IArray<(IString, models::Entity)> {
     response
         .results
         .bindings
@@ -178,7 +179,14 @@ pub fn spatial_entities_from_response(
 
             let label = extract_label(b.label);
 
-            Some((id, models::SpatialEntity { geometry, label }))
+            Some((
+                id,
+                models::Entity {
+                    geometry: Some(geometry),
+                    label,
+                    ..models::Entity::default()
+                },
+            ))
         })
         .collect()
 }
@@ -205,7 +213,7 @@ mod test {
 
         assert_eq!(
             format!("{:?}", spatial_entities_from_response(response)),
-            "{Rc(\"http://example.com/data/c\"): SpatialEntity { geometry: Polygon(Polygon { exterior: LineString([Coord { x: 150.5, y: -34.0 }, Coord { x: 150.502, y: -34.0005 }, Coord { x: 150.504, y: -34.001 }, Coord { x: 150.506, y: -34.0015 }, Coord { x: 150.508, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.512, y: -34.003 }, Coord { x: 150.514, y: -34.0035 }, Coord { x: 150.516, y: -34.004 }, Coord { x: 150.518, y: -34.0045 }, Coord { x: 150.52, y: -34.005 }, Coord { x: 150.522, y: -34.0045 }, Coord { x: 150.524, y: -34.004 }, Coord { x: 150.526, y: -34.0035 }, Coord { x: 150.528, y: -34.003 }, Coord { x: 150.53, y: -34.0025 }, Coord { x: 150.528, y: -34.002 }, Coord { x: 150.526, y: -34.0015 }, Coord { x: 150.524, y: -34.001 }, Coord { x: 150.522, y: -34.0005 }, Coord { x: 150.52, y: -34.0 }, Coord { x: 150.518, y: -34.0005 }, Coord { x: 150.516, y: -34.001 }, Coord { x: 150.514, y: -34.0015 }, Coord { x: 150.512, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.508, y: -34.003 }, Coord { x: 150.506, y: -34.0025 }, Coord { x: 150.504, y: -34.002 }, Coord { x: 150.502, y: -34.0015 }, Coord { x: 150.5, y: -34.001 }, Coord { x: 150.5, y: -34.0 }]), interiors: [] }), label: Some(Rc(\"C\")) }}"
+            "[(Rc(\"http://example.com/data/c\"), Entity { geometry: Some(Polygon(Polygon { exterior: LineString([Coord { x: 150.5, y: -34.0 }, Coord { x: 150.502, y: -34.0005 }, Coord { x: 150.504, y: -34.001 }, Coord { x: 150.506, y: -34.0015 }, Coord { x: 150.508, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.512, y: -34.003 }, Coord { x: 150.514, y: -34.0035 }, Coord { x: 150.516, y: -34.004 }, Coord { x: 150.518, y: -34.0045 }, Coord { x: 150.52, y: -34.005 }, Coord { x: 150.522, y: -34.0045 }, Coord { x: 150.524, y: -34.004 }, Coord { x: 150.526, y: -34.0035 }, Coord { x: 150.528, y: -34.003 }, Coord { x: 150.53, y: -34.0025 }, Coord { x: 150.528, y: -34.002 }, Coord { x: 150.526, y: -34.0015 }, Coord { x: 150.524, y: -34.001 }, Coord { x: 150.522, y: -34.0005 }, Coord { x: 150.52, y: -34.0 }, Coord { x: 150.518, y: -34.0005 }, Coord { x: 150.516, y: -34.001 }, Coord { x: 150.514, y: -34.0015 }, Coord { x: 150.512, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.508, y: -34.003 }, Coord { x: 150.506, y: -34.0025 }, Coord { x: 150.504, y: -34.002 }, Coord { x: 150.502, y: -34.0015 }, Coord { x: 150.5, y: -34.001 }, Coord { x: 150.5, y: -34.0 }]), interiors: [] })), label: Some(Rc(\"C\")), value: None, value_label: None, was_derived_from: [], was_generated_by: [], was_influenced_by: [] })]"
         );
     }
 
@@ -223,7 +231,7 @@ mod test {
 
         assert_eq!(
             format!("{:?}", entity_from_response(response)),
-            "Entity { label: Some(Rc(\"C\")), value: Some(Rc(\"3\")), value_label: None, was_derived_from: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_generated_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\"))], was_influenced_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\")), (Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))] }"
+            "Entity { geometry: None, label: Some(Rc(\"C\")), value: Some(Rc(\"3\")), value_label: None, was_derived_from: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_generated_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\"))], was_influenced_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\")), (Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))] }"
         );
     }
 }

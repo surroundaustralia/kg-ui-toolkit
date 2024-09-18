@@ -3,23 +3,23 @@
 use std::rc::Rc;
 
 use geo::Geometry;
-use implicit_clone::unsync::{IArray, IString};
+use implicit_clone::{
+    unsync::{IArray, IString},
+    ImplicitClone,
+};
 
 pub type Link = (Option<IString>, IString);
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Activity {
     pub label: Option<IString>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct SpatialEntity {
-    pub geometry: Rc<Geometry>,
-    pub label: Option<IString>,
-}
+impl ImplicitClone for Activity {}
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Entity {
+    pub geometry: Option<Rc<Geometry>>,
     pub label: Option<IString>,
     pub value: Option<IString>,
     pub value_label: Option<IString>,
@@ -27,3 +27,5 @@ pub struct Entity {
     pub was_generated_by: IArray<Link>,
     pub was_influenced_by: IArray<Link>,
 }
+
+impl ImplicitClone for Entity {}
