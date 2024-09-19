@@ -27,6 +27,8 @@ pub struct Props {
     pub map: Map,
     #[prop_or_default]
     pub on_entity_click: Option<Callback<IString>>,
+    #[prop_or_default]
+    pub dynamic_viewport: bool,
 }
 
 pub struct SpatialEntities {
@@ -34,8 +36,13 @@ pub struct SpatialEntities {
 }
 
 impl SpatialEntities {
-    fn to_html(entities: &IArray<(IString, models::Entity)>, map: &Map) -> Html {
+    fn to_html(
+        dynamic_viewport: bool,
+        entities: &IArray<(IString, models::Entity)>,
+        map: &Map,
+    ) -> Html {
         let mut entity_bounds: Option<Rect> = None;
+        let map_extent = map.extent.map_coords(|Coord { x, y }| Coord { x, y: -y });
         let content = entities
             .iter()
             .map(|(id, entity)| {
@@ -43,26 +50,28 @@ impl SpatialEntities {
                     let geometry = geometry.map_coords(|Coord { x, y }| Coord { x, y: -y });
 
                     if let Some(bounding_rect) = geometry.bounding_rect() {
-                        if let Some(mut entity_bounds) = entity_bounds {
-                            let mut min = entity_bounds.min();
-                            if bounding_rect.min().x < min.x {
-                                min.x = bounding_rect.min().x;
-                            }
-                            if bounding_rect.min().y < min.y {
-                                min.y = bounding_rect.min().y;
-                            }
-                            entity_bounds.set_min(min);
+                        if dynamic_viewport {
+                            if let Some(mut entity_bounds) = entity_bounds {
+                                let mut min = entity_bounds.min();
+                                if bounding_rect.min().x < min.x {
+                                    min.x = bounding_rect.min().x;
+                                }
+                                if bounding_rect.min().y < min.y {
+                                    min.y = bounding_rect.min().y;
+                                }
+                                entity_bounds.set_min(min);
 
-                            let mut max = entity_bounds.max();
-                            if bounding_rect.max().x > max.x {
-                                max.x = bounding_rect.max().x;
+                                let mut max = entity_bounds.max();
+                                if bounding_rect.max().x > max.x {
+                                    max.x = bounding_rect.max().x;
+                                }
+                                if bounding_rect.max().y > max.y {
+                                    max.y = bounding_rect.max().y;
+                                }
+                                entity_bounds.set_max(max);
+                            } else {
+                                entity_bounds = Some(bounding_rect);
                             }
-                            if bounding_rect.max().y > max.y {
-                                max.y = bounding_rect.max().y;
-                            }
-                            entity_bounds.set_max(max);
-                        } else {
-                            entity_bounds = Some(bounding_rect);
                         }
                     }
 
@@ -100,8 +109,12 @@ impl SpatialEntities {
             .collect::<Vec<String>>()
             .into_iter()
             .collect::<String>();
+        if dynamic_viewport {
+            entity_bounds = entity_bounds.map(|b| b.scale(4.0));
+        } else if !entities.is_empty() {
+            entity_bounds = Some(map_extent);
+        }
         if let Some(entity_bounds) = entity_bounds {
-            let entity_bounds = entity_bounds.scale(4.0);
             let viewport = format!(
                 "{} {} {} {}",
                 entity_bounds.min().x,
@@ -109,10 +122,10 @@ impl SpatialEntities {
                 entity_bounds.width(),
                 entity_bounds.height()
             );
-            let map_x = -entity_bounds.min().x;
-            let map_y = -entity_bounds.min().y;
-            let map_width = map.extent.width();
-            let map_height = map.extent.height();
+            let map_x = map_extent.min().x;
+            let map_y = map_extent.min().y;
+            let map_width = map_extent.width();
+            let map_height = map_extent.height();
             let map_src = &map.src;
             Html::from_html_unchecked(
                 format!(
@@ -138,12 +151,20 @@ impl Component for SpatialEntities {
 
     fn create(ctx: &yew::Context<Self>) -> Self {
         Self {
-            geometry_html: Self::to_html(&ctx.props().entities, &ctx.props().map),
+            geometry_html: Self::to_html(
+                ctx.props().dynamic_viewport,
+                &ctx.props().entities,
+                &ctx.props().map,
+            ),
         }
     }
 
     fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
-        self.geometry_html = Self::to_html(&ctx.props().entities, &ctx.props().map);
+        self.geometry_html = Self::to_html(
+            ctx.props().dynamic_viewport,
+            &ctx.props().entities,
+            &ctx.props().map,
+        );
         true
     }
 
