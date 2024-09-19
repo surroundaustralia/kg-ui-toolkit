@@ -51,7 +51,7 @@ impl SpatialEntities {
 
                     if let Some(bounding_rect) = geometry.bounding_rect() {
                         if dynamic_viewport {
-                            if let Some(mut entity_bounds) = entity_bounds {
+                            if let Some(entity_bounds) = &mut entity_bounds {
                                 let mut min = entity_bounds.min();
                                 if bounding_rect.min().x < min.x {
                                     min.x = bounding_rect.min().x;
@@ -75,11 +75,6 @@ impl SpatialEntities {
                         }
                     }
 
-                    let label_pos = geometry
-                        .bounding_rect()
-                        .map(|r| r.center())
-                        .unwrap_or_default();
-
                     let geometry_svg_str = geometry
                         .to_svg()
                         .items
@@ -93,14 +88,9 @@ impl SpatialEntities {
                         "
                             <g id={} class=\"entity-region\">
                                 {}
-                                <text x={} y={} font-size=\"0.01\">{}</text>
                             </g>
                         ",
-                        id,
-                        geometry_svg_str,
-                        label_pos.x,
-                        label_pos.y,
-                        entity.label.clone().unwrap_or_default()
+                        id, geometry_svg_str,
                     )
                 } else {
                     "".into()
@@ -110,7 +100,7 @@ impl SpatialEntities {
             .into_iter()
             .collect::<String>();
         if dynamic_viewport {
-            entity_bounds = entity_bounds.map(|b| b.scale(4.0));
+            entity_bounds = entity_bounds.map(|b| b.scale(1.25));
         } else if !entities.is_empty() {
             entity_bounds = Some(map_extent);
         }
