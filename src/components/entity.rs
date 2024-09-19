@@ -1,27 +1,21 @@
-use implicit_clone::unsync::IArray;
 use yew::prelude::*;
 
 use crate::models;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
-    pub label: Option<AttrValue>,
-    pub value: Option<AttrValue>,
-    pub value_label: Option<AttrValue>,
-    pub was_derived_from: IArray<models::Link>,
-    pub was_generated_by: IArray<models::Link>,
-    pub was_influenced_by: IArray<models::Link>,
+    pub entity: models::Entity,
 }
 
 #[function_component]
 pub fn Entity(props: &Props) -> Html {
     html! {
         <>
-        <h2>{format!("Entity: {}", props.label.clone().unwrap_or(AttrValue::from("<unknown>")))}</h2>
-        <label for="value">{props.value_label.clone().unwrap_or(AttrValue::from("Value"))}</label>
-        <input id="value" type="text" readonly=true value={props.value.clone().unwrap_or(AttrValue::from("-"))} />
+        <h2>{format!("Entity: {}", props.entity.label.clone().unwrap_or(AttrValue::from("<unknown>")))}</h2>
+        <label for="value">{props.entity.value_label.clone().unwrap_or(AttrValue::from("Value"))}</label>
+        <input id="value" type="text" readonly=true value={props.entity.value.clone().unwrap_or(AttrValue::from("-"))} />
         {
-            props.was_derived_from.iter().enumerate().map(|(i, link)| {
+            props.entity.was_derived_from.iter().enumerate().map(|(i, link)| {
                 let id = format!("was-derived-from-{i}");
                 html! {
                     <>
@@ -32,7 +26,7 @@ pub fn Entity(props: &Props) -> Html {
             }).collect::<Html>()
         }
         {
-            props.was_generated_by.iter().enumerate().map(|(i, link)| {
+            props.entity.was_generated_by.iter().enumerate().map(|(i, link)| {
                 let id = format!("was-generated-by-{i}");
                 html! {
                     <>
@@ -43,7 +37,7 @@ pub fn Entity(props: &Props) -> Html {
             }).collect::<Html>()
         }
         {
-            props.was_influenced_by.iter().enumerate().map(|(i, link)| {
+            props.entity.was_influenced_by.iter().enumerate().map(|(i, link)| {
                 let id = format!("was-influenced-by-{i}");
                 html! {
                     <>
