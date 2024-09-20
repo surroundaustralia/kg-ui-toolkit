@@ -1,5 +1,5 @@
 use gloo_net::http::Request;
-use implicit_clone::unsync::{IArray, IString};
+use implicit_clone::unsync::IString;
 use std::rc::Rc;
 
 use geojson::GeoJson;
@@ -63,9 +63,12 @@ pub struct Response<B> {
 
 // Requests
 
-pub async fn get_entity(object_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+pub async fn get_entity(
+    api_path: &str,
+    object_id: &str,
+) -> Result<Response<ObjectBinding>, gloo_net::Error> {
     let result = Request::get(&format!(
-        "/prov-chains/query?query=getObject&$object=<{object_id}>"
+        "{api_path}/query?query=getObject&$object=<{object_id}>"
     ))
     .header("Accept", "application/sparql-results+json")
     .send()
@@ -78,10 +81,11 @@ pub async fn get_entity(object_id: &str) -> Result<Response<ObjectBinding>, gloo
 }
 
 pub async fn get_spatial_entity(
+    api_path: &str,
     entity_id: &str,
 ) -> Result<Response<SpatialEntityBinding>, gloo_net::Error> {
     let result = Request::get(&format!(
-        "/prov-chains/query?query=getSpatialEntity&$entity=<{entity_id}>"
+        "{api_path}/query?query=getSpatialEntity&$entity=<{entity_id}>"
     ))
     .header("Accept", "application/sparql-results+json")
     .send()
@@ -154,7 +158,7 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
 
 pub fn spatial_entities_from_response(
     response: Response<SpatialEntityBinding>,
-) -> IArray<(IString, models::Entity)> {
+) -> Vec<(IString, models::Entity)> {
     response
         .results
         .bindings
