@@ -52,9 +52,16 @@ impl Component for Entity {
             <form>
                 <fieldset>
                     <legend>{format!("Entity: {}", ctx.props().entity.label.clone().unwrap_or(AttrValue::from("<unknown>")))}</legend>
-                    if let Some(value) = &ctx.props().entity.value {
-                        <label for="value">{ctx.props().entity.value_label.clone().unwrap_or(AttrValue::from("Value"))}</label>
-                        <input id="value" type="text" readonly=true value={value} />
+                    {
+                        ctx.props().entity.properties.iter().enumerate().map(|(i, (label, value))| {
+                            let id = format!("properties-{i}");
+                            html! {
+                                <>
+                                <label for={id.clone()}>{label}</label>
+                                <input id={id} type="text" readonly=true value={value} />
+                                </>
+                            }
+                        }).collect::<Html>()
                     }
                     {
                         ctx.props().entity.was_derived_from.iter().enumerate().map(|(i, link)| {

@@ -40,6 +40,7 @@ pub struct ObjectPropertyBinding {
 #[derive(Debug, Deserialize)]
 pub struct ObjectBinding {
     pub p: ObjectPropertyBinding,
+    pub plabel: Option<ObjectPropertyBinding>,
     pub o: ObjectPropertyBinding,
     pub olabel: Option<ObjectPropertyBinding>,
 }
@@ -113,8 +114,7 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
     #[derive(Default)]
     struct State {
         label: Option<IString>,
-        value: Option<IString>,
-        value_label: Option<IString>,
+        properties: Vec<(IString, IString)>,
         was_derived_from: Vec<models::Link>,
         was_generated_by: Vec<models::Link>,
         was_influenced_by: Vec<models::Link>,
@@ -128,9 +128,6 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
             if o.p.binding_type == BindingType::Uri {
                 if o.p.value == "http://www.w3.org/2000/01/rdf-schema#label" {
                     s.label = Some(o.o.value.into());
-                } else if o.p.value == "https://schema.org/value" {
-                    s.value = Some(o.o.value.into());
-                    s.value_label = extract_label(o.olabel);
                 } else if o.p.value == "http://www.w3.org/ns/prov#wasDerivedFrom" {
                     s.was_derived_from
                         .push((extract_label(o.olabel), o.o.value.into()));
@@ -140,6 +137,10 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
                 } else if o.p.value == "http://www.w3.org/ns/prov#wasInfluencedBy" {
                     s.was_influenced_by
                         .push((extract_label(o.olabel), o.o.value.into()));
+                } else if o.o.binding_type == BindingType::Literal {
+                    if let Some(label) = extract_label(o.plabel) {
+                        s.properties.push((label, o.o.value.into()));
+                    }
                 }
             }
             s
@@ -148,8 +149,7 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
     models::Entity {
         geometry: None,
         label: s.label,
-        value: s.value,
-        value_label: s.value_label,
+        properties: s.properties.into(),
         was_derived_from: s.was_derived_from.into(),
         was_generated_by: s.was_generated_by.into(),
         was_influenced_by: s.was_influenced_by.into(),
@@ -217,7 +217,7 @@ mod test {
 
         assert_eq!(
             format!("{:?}", spatial_entities_from_response(response)),
-            "[(Rc(\"http://example.com/data/c\"), Entity { geometry: Some(Polygon(Polygon { exterior: LineString([Coord { x: 150.5, y: -34.0 }, Coord { x: 150.502, y: -34.0005 }, Coord { x: 150.504, y: -34.001 }, Coord { x: 150.506, y: -34.0015 }, Coord { x: 150.508, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.512, y: -34.003 }, Coord { x: 150.514, y: -34.0035 }, Coord { x: 150.516, y: -34.004 }, Coord { x: 150.518, y: -34.0045 }, Coord { x: 150.52, y: -34.005 }, Coord { x: 150.522, y: -34.0045 }, Coord { x: 150.524, y: -34.004 }, Coord { x: 150.526, y: -34.0035 }, Coord { x: 150.528, y: -34.003 }, Coord { x: 150.53, y: -34.0025 }, Coord { x: 150.528, y: -34.002 }, Coord { x: 150.526, y: -34.0015 }, Coord { x: 150.524, y: -34.001 }, Coord { x: 150.522, y: -34.0005 }, Coord { x: 150.52, y: -34.0 }, Coord { x: 150.518, y: -34.0005 }, Coord { x: 150.516, y: -34.001 }, Coord { x: 150.514, y: -34.0015 }, Coord { x: 150.512, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.508, y: -34.003 }, Coord { x: 150.506, y: -34.0025 }, Coord { x: 150.504, y: -34.002 }, Coord { x: 150.502, y: -34.0015 }, Coord { x: 150.5, y: -34.001 }, Coord { x: 150.5, y: -34.0 }]), interiors: [] })), label: Some(Rc(\"C\")), value: None, value_label: None, was_derived_from: [], was_generated_by: [], was_influenced_by: [] })]"
+            "[(Rc(\"http://example.com/data/c\"), Entity { geometry: Some(Polygon(Polygon { exterior: LineString([Coord { x: 150.5, y: -34.0 }, Coord { x: 150.502, y: -34.0005 }, Coord { x: 150.504, y: -34.001 }, Coord { x: 150.506, y: -34.0015 }, Coord { x: 150.508, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.512, y: -34.003 }, Coord { x: 150.514, y: -34.0035 }, Coord { x: 150.516, y: -34.004 }, Coord { x: 150.518, y: -34.0045 }, Coord { x: 150.52, y: -34.005 }, Coord { x: 150.522, y: -34.0045 }, Coord { x: 150.524, y: -34.004 }, Coord { x: 150.526, y: -34.0035 }, Coord { x: 150.528, y: -34.003 }, Coord { x: 150.53, y: -34.0025 }, Coord { x: 150.528, y: -34.002 }, Coord { x: 150.526, y: -34.0015 }, Coord { x: 150.524, y: -34.001 }, Coord { x: 150.522, y: -34.0005 }, Coord { x: 150.52, y: -34.0 }, Coord { x: 150.518, y: -34.0005 }, Coord { x: 150.516, y: -34.001 }, Coord { x: 150.514, y: -34.0015 }, Coord { x: 150.512, y: -34.002 }, Coord { x: 150.51, y: -34.0025 }, Coord { x: 150.508, y: -34.003 }, Coord { x: 150.506, y: -34.0025 }, Coord { x: 150.504, y: -34.002 }, Coord { x: 150.502, y: -34.0015 }, Coord { x: 150.5, y: -34.001 }, Coord { x: 150.5, y: -34.0 }]), interiors: [] })), label: Some(Rc(\"C\")), properties: [], was_derived_from: [], was_generated_by: [], was_influenced_by: [] })]"
         );
     }
 
@@ -235,7 +235,7 @@ mod test {
 
         assert_eq!(
             format!("{:?}", entity_from_response(response)),
-            "Entity { geometry: None, label: Some(Rc(\"C\")), value: Some(Rc(\"3\")), value_label: None, was_derived_from: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_generated_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\"))], was_influenced_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\")), (Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))] }"
+            "Entity { geometry: None, label: Some(Rc(\"C\")), properties: [], was_derived_from: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_generated_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\"))], was_influenced_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\")), (Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))] }"
         );
     }
 }

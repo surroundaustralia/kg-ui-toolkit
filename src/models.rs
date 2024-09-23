@@ -21,8 +21,7 @@ impl ImplicitClone for Activity {}
 pub struct Entity {
     pub geometry: Option<Rc<Geometry>>,
     pub label: Option<IString>,
-    pub value: Option<IString>,
-    pub value_label: Option<IString>,
+    pub properties: IArray<(IString, IString)>,
     pub was_derived_from: IArray<Link>,
     pub was_generated_by: IArray<Link>,
     pub was_influenced_by: IArray<Link>,
