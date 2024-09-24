@@ -1,0 +1,97 @@
+{
+    "head": {
+        "vars": [
+            "agent",
+            "p",
+            "plabel",
+            "o",
+            "olabel"
+        ]
+    },
+    "results": {
+        "bindings": [
+            {
+                "agent": {
+                    "type": "uri",
+                    "value": "http://example.com/agents/chatGPT4"
+                },
+                "p": {
+                    "type": "uri",
+                    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                },
+                "o": {
+                    "type": "uri",
+                    "value": "http://www.w3.org/ns/prov#Agent"
+                },
+                "olabel": {
+                    "type": "literal",
+                    "value": "Agent"
+                }
+            },
+            {
+                "agent": {
+                    "type": "uri",
+                    "value": "http://example.com/agents/chatGPT4"
+                },
+                "p": {
+                    "type": "uri",
+                    "value": "http://www.w3.org/ns/prov#influenced"
+                },
+                "plabel": {
+                    "type": "literal",
+                    "value": "influenced"
+                },
+                "o": {
+                    "type": "uri",
+                    "value": "http://example.com/activities/router-q2"
+                },
+                "olabel": {
+                    "type": "literal",
+                    "value": "Route Geometry Extraction"
+                }
+            },
+            {
+                "agent": {
+                    "type": "uri",
+                    "value": "http://example.com/agents/chatGPT4"
+                },
+                "p": {
+                    "type": "uri",
+                    "value": "http://www.w3.org/2000/01/rdf-schema#label"
+                },
+                "o": {
+                    "type": "literal",
+                    "value": "ChatGPT (OpenAI) generic model"
+                }
+            },
+            {
+                "agent": {
+                    "type": "uri",
+                    "value": "http://example.com/agents/chatGPT4"
+                },
+                "p": {
+                    "type": "uri",
+                    "value": "https://schema.org/description"
+                },
+                "o": {
+                    "type": "literal",
+                    "value": "Generalised LLM"
+                }
+            },
+            {
+                "agent": {
+                    "type": "uri",
+                    "value": "http://example.com/agents/chatGPT4"
+                },
+                "p": {
+                    "type": "uri",
+                    "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                },
+                "o": {
+                    "type": "uri",
+                    "value": "http://www.w3.org/2002/07/owl#Thing"
+                }
+            }
+        ]
+    }
+}
