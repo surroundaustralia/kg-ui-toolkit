@@ -49,11 +49,11 @@
         },
         "p": {
           "type": "uri",
-          "value": "http://www.w3.org/ns/prov#wasInfluencedBy"
+          "value": "http://www.w3.org/ns/prov#wasAttributedTo"
         },
         "plabel": {
           "type": "literal",
-          "value": "wasInfluencedBy"
+          "value": "wasAttributedTo"
         },
         "o": {
           "type": "uri",
@@ -93,11 +93,11 @@
         },
         "p": {
           "type": "uri",
-          "value": "http://www.w3.org/ns/prov#wasInfluencedBy"
+          "value": "http://www.w3.org/ns/prov#wasAttributedTo"
         },
         "plabel": {
           "type": "literal",
-          "value": "wasInfluencedBy"
+          "value": "wasAttributedTo"
         },
         "o": {
           "type": "uri",
@@ -137,11 +137,11 @@
         },
         "p": {
           "type": "uri",
-          "value": "http://www.w3.org/ns/prov#wasInfluencedBy"
+          "value": "http://www.w3.org/ns/prov#wasAttributedTo"
         },
         "plabel": {
           "type": "literal",
-          "value": "wasInfluencedBy"
+          "value": "wasAttributedTo"
         },
         "o": {
           "type": "uri",

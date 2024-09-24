@@ -6,6 +6,7 @@ description = "Reusable components of the Rust toolkit for reuse in applications
 readme = "README.md"
 
 [dependencies]
+chrono = { workspace = true, features = ["serde"] }
 geo = { workspace = true }
 geo-svg = { workspace = true }
 geojson = { workspace = true, features = ["geo-types"] }

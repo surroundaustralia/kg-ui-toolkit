@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use gloo_net::http::Request;
 use implicit_clone::unsync::IString;
 use std::rc::Rc;
@@ -64,12 +65,46 @@ pub struct Response<B> {
 
 // Requests
 
-pub async fn get_entity(
+pub async fn get_activity(
     api_path: &str,
-    object_id: &str,
+    activity_id: &str,
 ) -> Result<Response<ObjectBinding>, gloo_net::Error> {
     let result = Request::get(&format!(
-        "{api_path}/query?query=getObject&$object=<{object_id}>"
+        "{api_path}/query?query=getActivity&$activity=<{activity_id}>"
+    ))
+    .header("Accept", "application/sparql-results+json")
+    .send()
+    .await;
+
+    match result {
+        Ok(r) => r.json().await,
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn get_agent(
+    api_path: &str,
+    agent_id: &str,
+) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+    let result = Request::get(&format!(
+        "{api_path}/query?query=getAgent&$agent=<{agent_id}>"
+    ))
+    .header("Accept", "application/sparql-results+json")
+    .send()
+    .await;
+
+    match result {
+        Ok(r) => r.json().await,
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn get_entity(
+    api_path: &str,
+    entity_id: &str,
+) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+    let result = Request::get(&format!(
+        "{api_path}/query?query=getEntity&$entity=<{entity_id}>"
     ))
     .header("Accept", "application/sparql-results+json")
     .send()
@@ -110,14 +145,111 @@ fn extract_label(label: Option<ObjectPropertyBinding>) -> Option<IString> {
     })
 }
 
+pub fn activity_from_response(response: Response<ObjectBinding>) -> models::Activity {
+    #[derive(Default)]
+    struct State {
+        ended_at: Option<DateTime<Utc>>,
+        generated: Vec<models::EntityLink>,
+        influenced: Vec<models::ActivityLink>,
+        label: Option<IString>,
+        properties: Vec<(IString, IString)>,
+        started_at: Option<DateTime<Utc>>,
+        used: Vec<models::EntityLink>,
+        was_associated_with: Vec<models::AgentLink>,
+        was_influenced_by: Vec<models::ActivityLink>,
+    }
+
+    let s = response
+        .results
+        .bindings
+        .into_iter()
+        .fold(State::default(), |mut s, o| {
+            if o.p.binding_type == BindingType::Uri {
+                if o.p.value == "http://www.w3.org/ns/prov#endedAtTime" {
+                    s.ended_at = o.o.value.parse().ok();
+                } else if o.p.value == "http://www.w3.org/2000/01/rdf-schema#label" {
+                    s.label = Some(o.o.value.into());
+                } else if o.p.value == "http://www.w3.org/ns/prov#generated" {
+                    s.generated
+                        .push((extract_label(o.olabel), o.o.value.into()));
+                } else if o.p.value == "http://www.w3.org/ns/prov#influenced" {
+                    s.influenced
+                        .push((extract_label(o.olabel), o.o.value.into()));
+                } else if o.p.value == "http://www.w3.org/ns/prov#startedAtTime" {
+                    s.started_at = o.o.value.parse().ok();
+                } else if o.p.value == "http://www.w3.org/ns/prov#used" {
+                    s.used.push((extract_label(o.olabel), o.o.value.into()));
+                } else if o.p.value == "http://www.w3.org/ns/prov#wasAssociatedWith" {
+                    s.was_associated_with
+                        .push((extract_label(o.olabel), o.o.value.into()));
+                } else if o.p.value == "http://www.w3.org/ns/prov#wasInfluencedBy" {
+                    s.was_influenced_by
+                        .push((extract_label(o.olabel), o.o.value.into()));
+                } else if o.o.binding_type == BindingType::Literal {
+                    if let Some(label) = extract_label(o.plabel) {
+                        s.properties.push((label, o.o.value.into()));
+                    }
+                }
+            }
+            s
+        });
+
+    models::Activity {
+        ended_at: s.ended_at,
+        label: s.label,
+        generated: s.generated.into(),
+        influenced: s.influenced.into(),
+        properties: s.properties.into(),
+        started_at: s.started_at,
+        used: s.used.into(),
+        was_associated_with: s.was_associated_with.into(),
+        was_influenced_by: s.was_influenced_by.into(),
+    }
+}
+
+pub fn agent_from_response(response: Response<ObjectBinding>) -> models::Agent {
+    #[derive(Default)]
+    struct State {
+        influenced: Vec<models::ActivityLink>,
+        label: Option<IString>,
+        properties: Vec<(IString, IString)>,
+    }
+
+    let s = response
+        .results
+        .bindings
+        .into_iter()
+        .fold(State::default(), |mut s, o| {
+            if o.p.binding_type == BindingType::Uri {
+                if o.p.value == "http://www.w3.org/ns/prov#influenced" {
+                    s.influenced
+                        .push((extract_label(o.olabel), o.o.value.into()));
+                } else if o.p.value == "http://www.w3.org/2000/01/rdf-schema#label" {
+                    s.label = Some(o.o.value.into());
+                } else if o.o.binding_type == BindingType::Literal {
+                    if let Some(label) = extract_label(o.plabel) {
+                        s.properties.push((label, o.o.value.into()));
+                    }
+                }
+            }
+            s
+        });
+
+    models::Agent {
+        influenced: s.influenced.into(),
+        label: s.label,
+        properties: s.properties.into(),
+    }
+}
+
 pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity {
     #[derive(Default)]
     struct State {
         label: Option<IString>,
         properties: Vec<(IString, IString)>,
-        was_derived_from: Vec<models::Link>,
-        was_generated_by: Vec<models::Link>,
-        was_influenced_by: Vec<models::Link>,
+        was_derived_from: Vec<models::EntityLink>,
+        was_generated_by: Vec<models::ActivityLink>,
+        was_attributed_to: Vec<models::ActivityLink>,
     }
 
     let s = response
@@ -128,14 +260,14 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
             if o.p.binding_type == BindingType::Uri {
                 if o.p.value == "http://www.w3.org/2000/01/rdf-schema#label" {
                     s.label = Some(o.o.value.into());
+                } else if o.p.value == "http://www.w3.org/ns/prov#wasAttributedTo" {
+                    s.was_attributed_to
+                        .push((extract_label(o.olabel), o.o.value.into()));
                 } else if o.p.value == "http://www.w3.org/ns/prov#wasDerivedFrom" {
                     s.was_derived_from
                         .push((extract_label(o.olabel), o.o.value.into()));
                 } else if o.p.value == "http://www.w3.org/ns/prov#wasGeneratedBy" {
                     s.was_generated_by
-                        .push((extract_label(o.olabel), o.o.value.into()));
-                } else if o.p.value == "http://www.w3.org/ns/prov#wasInfluencedBy" {
-                    s.was_influenced_by
                         .push((extract_label(o.olabel), o.o.value.into()));
                 } else if o.o.binding_type == BindingType::Literal {
                     if let Some(label) = extract_label(o.plabel) {
@@ -150,9 +282,9 @@ pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity
         geometry: None,
         label: s.label,
         properties: s.properties.into(),
+        was_attributed_to: s.was_attributed_to.into(),
         was_derived_from: s.was_derived_from.into(),
         was_generated_by: s.was_generated_by.into(),
-        was_influenced_by: s.was_influenced_by.into(),
     }
 }
 
@@ -235,7 +367,43 @@ mod test {
 
         assert_eq!(
             format!("{:?}", entity_from_response(response)),
-            "Entity { geometry: None, label: Some(Rc(\"C\")), properties: [], was_derived_from: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_generated_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\"))], was_influenced_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\")), (Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))] }"
+            "Entity { geometry: None, label: Some(Rc(\"C\")), properties: [], was_attributed_to: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\")), (Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_derived_from: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_generated_by: [(Some(Rc(\"Adder-run1\")), Rc(\"http://example.com/activities/add1\"))] }"
+        );
+    }
+
+    #[test]
+    fn test_deser_q3() {
+        let mut f = fs::File::open(format!(
+            "{}/sample_data/q3.json",
+            env!("CARGO_MANIFEST_DIR")
+        ))
+        .unwrap();
+
+        let mut raw_response = String::new();
+        f.read_to_string(&mut raw_response).unwrap();
+        let response = serde_json::from_str(&raw_response).unwrap();
+
+        assert_eq!(
+            format!("{:?}", activity_from_response(response)),
+            "Activity { ended_at: Some(2029-01-01T20:05:19Z), generated: [(Some(Rc(\"C\")), Rc(\"http://example.com/data/c\"))], influenced: [(Some(Rc(\"C\")), Rc(\"http://example.com/data/c\"))], label: Some(Rc(\"Adder-run1\")), properties: [], started_at: None, used: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\"))], was_associated_with: [(Some(Rc(\"Add\")), Rc(\"http://example.com/agents/adder\"))], was_influenced_by: [(Some(Rc(\"A\")), Rc(\"http://example.com/data/a\")), (Some(Rc(\"B\")), Rc(\"http://example.com/data/b\")), (Some(Rc(\"Add\")), Rc(\"http://example.com/agents/adder\"))] }"
+        );
+    }
+
+    #[test]
+    fn test_deser_agent() {
+        let mut f = fs::File::open(format!(
+            "{}/sample_data/agent.json",
+            env!("CARGO_MANIFEST_DIR")
+        ))
+        .unwrap();
+
+        let mut raw_response = String::new();
+        f.read_to_string(&mut raw_response).unwrap();
+        let response = serde_json::from_str(&raw_response).unwrap();
+
+        assert_eq!(
+            format!("{:?}", agent_from_response(response)),
+            "Agent { influenced: [(Some(Rc(\"Route Geometry Extraction\")), Rc(\"http://example.com/activities/router-q2\"))], label: Some(Rc(\"ChatGPT (OpenAI) generic model\")), properties: [] }"
         );
     }
 }
