@@ -51,9 +51,9 @@ impl ImplicitClone for Entity {}
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Provenance {
-    Activity(Activity),
-    Agent(Agent),
-    Entity(Entity),
+    Activity(Box<Activity>),
+    Agent(Box<Agent>),
+    Entity(Box<Entity>),
 }
 
 impl ImplicitClone for Provenance {}

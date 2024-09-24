@@ -89,7 +89,7 @@ impl Component for Agent {
                             html! {
                                 <>
                                 <label for={id.clone()}>{"Influenced"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(|id| Message::ActivityClicked(id))}>{link.0.clone().unwrap_or(link.1.clone())}</a>
+                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::ActivityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
                                 </>
                             }
                         }).collect::<Html>()

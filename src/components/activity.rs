@@ -111,7 +111,7 @@ impl Component for Activity {
                             html! {
                                 <>
                                 <label for={id.clone()}>{"Generated"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(|id| Message::EntityClicked(id))}>{link.0.clone().unwrap_or(link.1.clone())}</a>
+                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::EntityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
                                 </>
                             }
                         }).collect::<Html>()
@@ -122,7 +122,7 @@ impl Component for Activity {
                             html! {
                                 <>
                                 <label for={id.clone()}>{"Influenced"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(|id| Message::ActivityClicked(id))}>{link.0.clone().unwrap_or(link.1.clone())}</a>
+                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::ActivityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
                                 </>
                             }
                         }).collect::<Html>()
@@ -133,7 +133,7 @@ impl Component for Activity {
                             html! {
                                 <>
                                 <label for={id.clone()}>{"Used"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(|id| Message::EntityClicked(id))}>{link.0.clone().unwrap_or(link.1.clone())}</a>
+                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::EntityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
                                 </>
                             }
                         }).collect::<Html>()
@@ -144,7 +144,7 @@ impl Component for Activity {
                             html! {
                                 <>
                                 <label for={id.clone()}>{"Associated with"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(|id| Message::AgentClicked(id))}>{link.0.clone().unwrap_or(link.1.clone())}</a>
+                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::AgentClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
                                 </>
                             }
                         }).collect::<Html>()
@@ -155,7 +155,7 @@ impl Component for Activity {
                             html! {
                                 <>
                                 <label for={id.clone()}>{"Influenced by"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(|id| Message::ActivityClicked(id))}>{link.0.clone().unwrap_or(link.1.clone())}</a>
+                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::ActivityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
                                 </>
                             }
                         }).collect::<Html>()
