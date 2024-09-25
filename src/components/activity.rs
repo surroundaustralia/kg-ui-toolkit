@@ -1,8 +1,10 @@
 use implicit_clone::unsync::IString;
-use web_sys::{wasm_bindgen::JsCast, HtmlAnchorElement};
 use yew::prelude::*;
 
-use crate::models;
+use crate::{
+    components::{onclick_anchor_handler, DateTime, GenericProperties, ProvenanceLinks},
+    models,
+};
 
 pub enum Message {
     ActivityClicked(IString),
@@ -56,110 +58,18 @@ impl Component for Activity {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let onclick = |message: fn(IString) -> Message| {
-            ctx.link().batch_callback(move |event: MouseEvent| {
-                event.prevent_default();
-                event.target().and_then(|event_target| {
-                    event_target
-                        .dyn_into::<HtmlAnchorElement>()
-                        .ok()
-                        .map(|element| message(element.href().into()))
-                })
-            })
-        };
-
         html! {
             <form>
                 <fieldset>
                     <legend>{format!("Activity: {}", ctx.props().activity.label.clone().unwrap_or(AttrValue::from("<unknown>")))}</legend>
-                    {
-                        ctx.props().activity.started_at.iter().map(|value| {
-                            let id = "ended-at";
-                            html! {
-                                <>
-                                <label for={id}>{"Started at"}</label>
-                                <input id={id} type="text" readonly=true value={format!("{}", value.format("%Y-%m-%d %H:%M:%S UTC"))} />
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().activity.ended_at.iter().map(|value| {
-                            let id = "ended-at";
-                            html! {
-                                <>
-                                <label for={id}>{"Ended at"}</label>
-                                <input id={id} type="text" readonly=true value={format!("{}", value.format("%Y-%m-%d %H:%M:%S UTC"))} />
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().activity.properties.iter().enumerate().map(|(i, (label, value))| {
-                            let id = format!("properties-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{label}</label>
-                                <input id={id} type="text" readonly=true value={value} />
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().activity.generated.iter().enumerate().map(|(i, link)| {
-                            let id = format!("generated-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{"Generated"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::EntityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().activity.influenced.iter().enumerate().map(|(i, link)| {
-                            let id = format!("influenced-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{"Influenced"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::ActivityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().activity.used.iter().enumerate().map(|(i, link)| {
-                            let id = format!("used-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{"Used"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::EntityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().activity.was_associated_with.iter().enumerate().map(|(i, link)| {
-                            let id = format!("was-associated-with-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{"Associated with"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::AgentClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().activity.was_influenced_by.iter().enumerate().map(|(i, link)| {
-                            let id = format!("was-influenced-by-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{"Influenced by"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::ActivityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
+                    <DateTime id="started-at" label="Started at" value={ctx.props().activity.started_at} />
+                    <DateTime id="ended-at" label="Ended at" value={ctx.props().activity.ended_at} />
+                    <GenericProperties properties={ctx.props().activity.properties.clone()} />
+                    <ProvenanceLinks id_prefix="generated" label="Generated" links={ctx.props().activity.generated.clone()} onclick={onclick_anchor_handler(ctx.link(), Message::EntityClicked)} />
+                    <ProvenanceLinks id_prefix="influenced" label="Influenced" links={ctx.props().activity.influenced.clone()} onclick={onclick_anchor_handler(ctx.link(), Message::ActivityClicked)} />
+                    <ProvenanceLinks id_prefix="used" label="Used" links={ctx.props().activity.used.clone()} onclick={onclick_anchor_handler(ctx.link(), Message::EntityClicked)} />
+                    <ProvenanceLinks id_prefix="associated-with" label="Associated with" links={ctx.props().activity.was_associated_with.clone()} onclick={onclick_anchor_handler(ctx.link(), Message::AgentClicked)} />
+                    <ProvenanceLinks id_prefix="influenced-by" label="Influenced by" links={ctx.props().activity.was_influenced_by.clone()} onclick={onclick_anchor_handler(ctx.link(), Message::ActivityClicked)} />
                 </fieldset>
             </form>
         }

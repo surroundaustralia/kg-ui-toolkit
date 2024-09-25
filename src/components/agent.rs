@@ -1,8 +1,10 @@
 use implicit_clone::unsync::IString;
-use web_sys::{wasm_bindgen::JsCast, HtmlAnchorElement};
 use yew::prelude::*;
 
-use crate::models;
+use crate::{
+    components::{onclick_anchor_handler, GenericProperties, ProvenanceLinks},
+    models,
+};
 
 pub enum Message {
     ActivityClicked(IString),
@@ -56,44 +58,12 @@ impl Component for Agent {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let onclick = |message: fn(IString) -> Message| {
-            ctx.link().batch_callback(move |event: MouseEvent| {
-                event.prevent_default();
-                event.target().and_then(|event_target| {
-                    event_target
-                        .dyn_into::<HtmlAnchorElement>()
-                        .ok()
-                        .map(|element| message(element.href().into()))
-                })
-            })
-        };
-
         html! {
             <form>
                 <fieldset>
                     <legend>{format!("Agent: {}", ctx.props().agent.label.clone().unwrap_or(AttrValue::from("<unknown>")))}</legend>
-                    {
-                        ctx.props().agent.properties.iter().enumerate().map(|(i, (label, value))| {
-                            let id = format!("properties-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{label}</label>
-                                <input id={id} type="text" readonly=true value={value} />
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
-                    {
-                        ctx.props().agent.influenced.iter().enumerate().map(|(i, link)| {
-                            let id = format!("influenced-{i}");
-                            html! {
-                                <>
-                                <label for={id.clone()}>{"Influenced"}</label>
-                                <a key={id.clone()} id={id} href={link.1.clone()} onclick={onclick(Message::ActivityClicked)}>{link.0.clone().unwrap_or(link.1.clone())}</a>
-                                </>
-                            }
-                        }).collect::<Html>()
-                    }
+                    <GenericProperties properties={ctx.props().agent.properties.clone()} />
+                    <ProvenanceLinks id_prefix="influenced" label="Influenced" links={ctx.props().agent.influenced.clone()} onclick={onclick_anchor_handler(ctx.link(), Message::ActivityClicked)} />
                 </fieldset>
             </form>
         }
