@@ -39,6 +39,22 @@ pub struct ObjectPropertyBinding {
 // High level types
 
 #[derive(Debug, Deserialize)]
+pub struct DimDescBinding {
+    pub name: ObjectPropertyBinding,
+    pub order: ObjectPropertyBinding,
+    #[serde(rename = "dimRange")]
+    pub range: ObjectPropertyBinding,
+    #[serde(rename = "targetRange")]
+    pub target_range: Option<ObjectPropertyBinding>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DimValueBinding {
+    pub d: ObjectPropertyBinding,
+    pub v: ObjectPropertyBinding,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct ObjectBinding {
     pub p: ObjectPropertyBinding,
     pub plabel: Option<ObjectPropertyBinding>,
@@ -88,6 +104,40 @@ pub async fn get_agent(
 ) -> Result<Response<ObjectBinding>, gloo_net::Error> {
     let result = Request::get(&format!(
         "{api_path}/query?query=getAgent&$agent=<{agent_id}>"
+    ))
+    .header("Accept", "application/sparql-results+json")
+    .send()
+    .await;
+
+    match result {
+        Ok(r) => r.json().await,
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn get_dim_desc(
+    api_path: &str,
+    entity_id: &str,
+) -> Result<Response<DimDescBinding>, gloo_net::Error> {
+    let result = Request::get(&format!(
+        "{api_path}/query?query=getDimDesc&$object=<{entity_id}>"
+    ))
+    .header("Accept", "application/sparql-results+json")
+    .send()
+    .await;
+
+    match result {
+        Ok(r) => r.json().await,
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn get_dim_values(
+    api_path: &str,
+    entity_id: &str,
+) -> Result<Response<DimValueBinding>, gloo_net::Error> {
+    let result = Request::get(&format!(
+        "{api_path}/query?query=getDimValues&$object=<{entity_id}>"
     ))
     .header("Accept", "application/sparql-results+json")
     .send()
@@ -240,6 +290,65 @@ pub fn agent_from_response(response: Response<ObjectBinding>) -> models::Agent {
         label: s.label,
         properties: s.properties.into(),
     }
+}
+
+pub fn dim_desc_from_response(response: Response<DimDescBinding>) -> Vec<models::DimDesc> {
+    response
+        .results
+        .bindings
+        .into_iter()
+        .filter_map(|dd| {
+            if dd.name.binding_type != BindingType::Literal {
+                return None;
+            }
+            let name = dd.name.value.into();
+
+            if dd.order.binding_type != BindingType::Literal {
+                return None;
+            }
+            let order = dd.order.value.parse().ok()?;
+
+            if dd.range.binding_type != BindingType::Literal {
+                return None;
+            }
+            let range = 0f32..dd.range.value.parse().ok()?;
+
+            let target_range = dd.target_range.and_then(|target_range_binding| {
+                if target_range_binding.binding_type != BindingType::Literal {
+                    return None;
+                }
+                Some(0f32..target_range_binding.value.parse().ok()?)
+            });
+
+            Some(models::DimDesc {
+                name,
+                order,
+                range,
+                target_range,
+            })
+        })
+        .collect()
+}
+
+pub fn dim_values_from_response(response: Response<DimValueBinding>) -> Vec<models::DimValue> {
+    response
+        .results
+        .bindings
+        .into_iter()
+        .filter_map(|dv| {
+            if dv.d.binding_type != BindingType::Literal {
+                return None;
+            }
+            let d = dv.d.value.into();
+
+            if dv.v.binding_type != BindingType::Literal {
+                return None;
+            }
+            let v = dv.v.value.parse().ok()?;
+
+            Some(models::DimValue { d, v })
+        })
+        .collect()
 }
 
 pub fn entity_from_response(response: Response<ObjectBinding>) -> models::Entity {
@@ -404,6 +513,42 @@ mod test {
         assert_eq!(
             format!("{:?}", agent_from_response(response)),
             "Agent { influenced: [(Some(Rc(\"Route Geometry Extraction\")), Rc(\"http://example.com/activities/router-q2\"))], label: Some(Rc(\"ChatGPT (OpenAI) generic model\")), properties: [] }"
+        );
+    }
+
+    #[test]
+    fn test_deser_dimdescs() {
+        let mut f = fs::File::open(format!(
+            "{}/sample_data/path_q3.json",
+            env!("CARGO_MANIFEST_DIR")
+        ))
+        .unwrap();
+
+        let mut raw_response = String::new();
+        f.read_to_string(&mut raw_response).unwrap();
+        let response = serde_json::from_str(&raw_response).unwrap();
+
+        assert_eq!(
+            format!("{:?}", dim_desc_from_response(response)),
+            "[DimDesc { name: Rc(\"Foo\"), order: 1, range: 0.0..5.0, target_range: Some(0.0..5.0) }, DimDesc { name: Rc(\"Bar\"), order: 3, range: 0.0..5.0, target_range: Some(0.0..5.0) }, DimDesc { name: Rc(\"Dang\"), order: 2, range: 0.0..5.0, target_range: Some(0.0..5.0) }]"
+        );
+    }
+
+    #[test]
+    fn test_deser_dimvalues() {
+        let mut f = fs::File::open(format!(
+            "{}/sample_data/path_q4.json",
+            env!("CARGO_MANIFEST_DIR")
+        ))
+        .unwrap();
+
+        let mut raw_response = String::new();
+        f.read_to_string(&mut raw_response).unwrap();
+        let response = serde_json::from_str(&raw_response).unwrap();
+
+        assert_eq!(
+            format!("{:?}", dim_values_from_response(response)),
+            "[DimValue { d: Rc(\"Foo\"), v: 3.0 }, DimValue { d: Rc(\"Bar\"), v: 1.0 }, DimValue { d: Rc(\"Dang\"), v: 2.0 }]"
         );
     }
 }
