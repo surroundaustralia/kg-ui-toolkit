@@ -1,6 +1,6 @@
 //! Model types for use in a UI context.
 
-use std::rc::Rc;
+use std::{ops::Range, rc::Rc};
 
 use chrono::{DateTime, Utc};
 use geo::Geometry;
@@ -36,6 +36,24 @@ pub struct Agent {
 }
 
 impl ImplicitClone for Agent {}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct DimDesc {
+    pub name: IString,
+    pub order: usize,
+    pub range: Range<f32>,
+    pub target_range: Option<Range<f32>>,
+}
+
+impl ImplicitClone for DimDesc {}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct DimValue {
+    pub d: IString,
+    pub v: f32,
+}
+
+impl ImplicitClone for DimValue {}
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Entity {

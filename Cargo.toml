@@ -18,3 +18,4 @@ serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 web-sys = { workspace = true, features = [ "HtmlAnchorElement" ] }
 yew = { workspace = true, features = ["csr"] }
+yew-chart = { workspace = true }

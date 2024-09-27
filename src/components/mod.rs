@@ -7,6 +7,7 @@ use yew::prelude::*;
 
 pub mod activity;
 pub mod agent;
+pub mod dimview;
 pub mod entity;
 pub mod spatial_entities;
 
