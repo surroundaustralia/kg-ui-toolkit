@@ -38,14 +38,16 @@ pub struct SpatialEntities {
 impl SpatialEntities {
     fn to_html(
         dynamic_viewport: bool,
-        entities: &IArray<(IString, models::Entity)>,
+        mut entities: Vec<(IString, models::Entity)>,
         map: &Map,
     ) -> Html {
         let mut entity_bounds: Option<Rect> = None;
         let map_extent = map.extent.map_coords(|Coord { x, y }| Coord { x, y: -y });
+        entities.sort_by_key(|(id, _)| id.clone());
         let content = entities
             .iter()
-            .map(|(id, entity)| {
+            .enumerate()
+            .map(|(i, (_, entity))| {
                 if let Some(geometry) = &entity.geometry {
                     let geometry = geometry.map_coords(|Coord { x, y }| Coord { x, y: -y });
 
@@ -86,11 +88,11 @@ impl SpatialEntities {
 
                     format!(
                         "
-                            <g id={} class=\"entity-region\">
+                            <g class=\"entity-region-{}\">
                                 {}
                             </g>
                         ",
-                        id, geometry_svg_str,
+                        i, geometry_svg_str,
                     )
                 } else {
                     "".into()
@@ -143,7 +145,7 @@ impl Component for SpatialEntities {
         Self {
             geometry_html: Self::to_html(
                 ctx.props().dynamic_viewport,
-                &ctx.props().entities,
+                ctx.props().entities.to_vec(),
                 &ctx.props().map,
             ),
         }
@@ -152,7 +154,7 @@ impl Component for SpatialEntities {
     fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
         self.geometry_html = Self::to_html(
             ctx.props().dynamic_viewport,
-            &ctx.props().entities,
+            ctx.props().entities.to_vec(),
             &ctx.props().map,
         );
         true

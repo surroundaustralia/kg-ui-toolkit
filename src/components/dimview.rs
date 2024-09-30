@@ -54,7 +54,7 @@ impl Component for DimView {
                     .collect(),
             );
 
-            let data_by_series: Vec<(IString, Rc<Data<f32, f32>>)> = ctx
+            let mut data_by_series: Vec<(IString, Rc<Data<f32, f32>>)> = ctx
                 .props()
                 .dim_values
                 .iter()
@@ -78,6 +78,7 @@ impl Component for DimView {
                     (series_name, data)
                 })
                 .collect();
+            data_by_series.sort_by_key(|(series_name, _)| series_name.clone());
 
             let scale = Rc::new(LinearScale::new(-1.0..1.0, 1.0)) as Rc<dyn Scale<Scalar = _>>;
 
@@ -110,11 +111,11 @@ impl Component for DimView {
                         vertical_scale={scale.clone()}
                         x={MARGIN} y={MARGIN} width={WIDTH - (MARGIN * 2.0)} height={HEIGHT - (MARGIN * 2.0)} />
 
-                    { data_by_series.iter().map(|(series_name, data)| {
+                    { data_by_series.iter().enumerate().map(|(i, (_, data))| {
                         html! {
                             <Series<f32, f32>
                                 series_type={Type::Area}
-                                name={series_name}
+                                name={format!("series-name-{i}")}
                                 data={data}
                                 horizontal_scale={scale.clone()}
                                 vertical_scale={scale.clone()}
