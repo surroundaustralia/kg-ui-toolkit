@@ -96,7 +96,7 @@ impl Component for DimView {
                     }
                     {
                         (2..=4).map(|i| {
-                            let r = ((WIDTH / 2.0) - ((MARGIN * i as f32))).to_string();
+                            let r = ((WIDTH / 2.0) - (MARGIN * i as f32)).to_string();
                             html! {
                                 <circle cx={cx.clone()} cy={cy.clone()} r={r} />
                             }
