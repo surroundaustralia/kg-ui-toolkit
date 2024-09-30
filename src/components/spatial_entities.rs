@@ -47,7 +47,7 @@ impl SpatialEntities {
         let content = entities
             .iter()
             .enumerate()
-            .map(|(i, (_, entity))| {
+            .map(|(i, (id, entity))| {
                 if let Some(geometry) = &entity.geometry {
                     let geometry = geometry.map_coords(|Coord { x, y }| Coord { x, y: -y });
 
@@ -88,11 +88,11 @@ impl SpatialEntities {
 
                     format!(
                         "
-                            <g class=\"entity-region-{}\">
+                            <g id={} class=\"entity-region-{}\">
                                 {}
                             </g>
                         ",
-                        i, geometry_svg_str,
+                        id, i, geometry_svg_str,
                     )
                 } else {
                     "".into()
@@ -178,7 +178,12 @@ impl Component for SpatialEntities {
                     .dyn_into::<Element>()
                     .ok()
                     .and_then(|mut element| {
-                        while element.get_attribute("class").as_deref() != Some("entity-region") {
+                        while element
+                            .get_attribute("class")
+                            .as_deref()
+                            .filter(|c| c.starts_with("entity-region"))
+                            .is_none()
+                        {
                             element = element.parent_element()?;
                         }
                         Some(Message::EntityClicked(element.id().into()))
