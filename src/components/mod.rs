@@ -11,7 +11,7 @@ pub mod dimview;
 pub mod entity;
 pub mod spatial_entities;
 
-fn onclick_anchor_handler<COMP: BaseComponent<Message = M>, M: 'static>(
+pub fn onclick_anchor_handler<COMP: BaseComponent<Message = M>, M: 'static>(
     link: &Scope<COMP>,
     message: fn(IString) -> M,
 ) -> Callback<MouseEvent> {
@@ -27,14 +27,14 @@ fn onclick_anchor_handler<COMP: BaseComponent<Message = M>, M: 'static>(
 }
 
 #[derive(Properties, PartialEq)]
-struct DateTimeProps {
+pub struct DateTimeProps {
     label: IString,
     id: IString,
     value: Option<chrono::DateTime<chrono::Utc>>,
 }
 
 #[function_component]
-fn DateTime(props: &DateTimeProps) -> Html {
+pub fn DateTime(props: &DateTimeProps) -> Html {
     props
         .value
         .iter()
@@ -50,12 +50,12 @@ fn DateTime(props: &DateTimeProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct GenericPropertiesProps {
+pub struct GenericPropertiesProps {
     properties: IArray<(IString, IString)>,
 }
 
 #[function_component]
-fn GenericProperties(props: &GenericPropertiesProps) -> Html {
+pub fn GenericProperties(props: &GenericPropertiesProps) -> Html {
     html! {
         props.properties.iter().enumerate().map(|(i, (label, value))| {
             let id = format!("properties-{i}");
@@ -70,7 +70,7 @@ fn GenericProperties(props: &GenericPropertiesProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-struct ProvenanceLinksProps {
+pub struct ProvenanceLinksProps {
     label: IString,
     id_prefix: IString,
     links: IArray<(Option<IString>, IString)>,
@@ -78,7 +78,7 @@ struct ProvenanceLinksProps {
 }
 
 #[function_component]
-fn ProvenanceLinks(props: &ProvenanceLinksProps) -> Html {
+pub fn ProvenanceLinks(props: &ProvenanceLinksProps) -> Html {
     props
         .links
         .iter()

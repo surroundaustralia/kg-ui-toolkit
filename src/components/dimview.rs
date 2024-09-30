@@ -18,9 +18,9 @@ pub struct Props {
 
 pub struct DimView;
 
-const WIDTH: f32 = 300.0;
-const HEIGHT: f32 = 300.0;
-const MARGIN: f32 = 50.0;
+const WIDTH: f32 = 200.0;
+const HEIGHT: f32 = 200.0;
+const MARGIN: f32 = 20.0;
 
 impl Component for DimView {
     type Message = ();
@@ -81,8 +81,27 @@ impl Component for DimView {
 
             let scale = Rc::new(LinearScale::new(-1.0..1.0, 1.0)) as Rc<dyn Scale<Scalar = _>>;
 
+            let cx = IString::from((WIDTH / 2.0).to_string());
+            let cy = IString::from((HEIGHT / 2.0).to_string());
+
             html! {
                 <svg class="chart" viewBox={format!("0 0 {} {}", WIDTH, HEIGHT)} preserveAspectRatio="none">
+                    {
+                        series::to_radial(vec![0.8; dim_desc.len()])
+                            .into_iter().map(|(x2, y2, _)| {
+                                html! {
+                                    <line x1={cx.clone()} y1={cy.clone()} x2={(scale.normalise(x2).0 * WIDTH).to_string()} y2={(scale.normalise(y2).0 * HEIGHT).to_string()} />
+                                }
+                            }).collect::<Html>()
+                    }
+                    {
+                        (2..=4).map(|i| {
+                            let r = ((WIDTH / 2.0) - ((MARGIN * i as f32))).to_string();
+                            html! {
+                                <circle cx={cx.clone()} cy={cy.clone()} r={r} />
+                            }
+                    }).collect::<Html>() }
+
                     <Series<f32, f32>
                         series_type={Type::Area}
                         name="labels"
