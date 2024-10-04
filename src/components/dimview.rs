@@ -91,7 +91,7 @@ impl Component for DimView {
                         series::to_radial(vec![0.8; dim_desc.len()])
                             .into_iter().map(|(x2, y2, _)| {
                                 html! {
-                                    <line x1={cx.clone()} y1={cy.clone()} x2={(scale.normalise(x2).0 * WIDTH).to_string()} y2={(scale.normalise(y2).0 * HEIGHT).to_string()} />
+                                    <line x1={cx.clone()} y1={cy.clone()} x2={(scale.normalise(x2).0 * WIDTH).to_string()} y2={(scale.normalise(-y2).0 * HEIGHT).to_string()} />
                                 }
                             }).collect::<Html>()
                     }
