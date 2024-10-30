@@ -1,0 +1,21 @@
+{
+  "name": "Provenance Explorer",
+  "abstract": "UI components to display and navigate Provenance using the PROV-O standard",
+  "status": "under-development",
+  "dateTimeAddition": "2023-05-19T00:00:00Z",
+  "itemClass": "schema",
+  "register": "ccm",
+  "version": "1.0",
+  "dateOfLastChange": "2023-05-19",
+  "sources": [
+  ],
+  "maturity": "development",
+  "scope": "unstable",
+  "dependsOn": [
+    "bblocks://sop.at.activities.derivation"
+  ],
+  "tags": [
+    "prov"],
+  "group": "Activities",
+  "highlighted": true
+}
