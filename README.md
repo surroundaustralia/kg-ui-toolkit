@@ -19,3 +19,5 @@ Reusable components of the Rust toolkit for reuse in applications
 
 The project is intended to be used as a git-submodule from within the UI project. It is also expected to be
 used as a Cargo workspace member.
+
+_This project also uses the OGC Building Blocks model to define how components interact with information architecture aspects_
