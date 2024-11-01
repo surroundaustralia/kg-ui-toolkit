@@ -12,8 +12,8 @@
   "maturity": "development",
   "scope": "unstable",
   "dependsOn": [
-    "surround.ran.prov.trace",
-    "surround.ran.ui.graphs.radar"
+    "sop.ui.kgtools.prov.trace",
+    "sop.ui.kgtools.ai.chat"
   ],
   "tags": [
     "prov"
