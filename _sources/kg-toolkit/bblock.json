@@ -1,6 +1,6 @@
 {
-  "name": "Provenance Explorer",
-  "abstract": "UI components to display and navigate Provenance using the PROV-O standard",
+  "name": "KG UI toolkit",
+  "abstract": "Tools for accessing standard graph patterns in a UI",
   "status": "under-development",
   "dateTimeAddition": "2023-05-19T00:00:00Z",
   "itemClass": "schema",
@@ -12,12 +12,12 @@
   "maturity": "development",
   "scope": "unstable",
   "dependsOn": [
-    "sop.at.activities.derivation",
-    "sop.at.entities.dataset"
+    "surround.ran.prov.trace",
+    "surround.ran.ui.graphs.radar"
   ],
   "tags": [
     "prov"
   ],
-  "group": "Activities",
+  "group": "Apps",
   "highlighted": true
 }

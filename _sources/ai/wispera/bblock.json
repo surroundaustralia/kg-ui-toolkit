@@ -1,6 +1,6 @@
 {
-  "name": "Provenance Explorer",
-  "abstract": "UI components to display and navigate Provenance using the PROV-O standard",
+  "name": "Wispera AI Assitant",
+  "abstract": "API access to the Wispera AI sub-system enables access to multiple AI systems through a common framework.",
   "status": "under-development",
   "dateTimeAddition": "2023-05-19T00:00:00Z",
   "itemClass": "schema",
@@ -12,12 +12,10 @@
   "maturity": "development",
   "scope": "unstable",
   "dependsOn": [
-    "sop.at.activities.derivation",
-    "sop.at.entities.dataset"
   ],
   "tags": [
     "prov"
   ],
-  "group": "Activities",
+  "group": "Apps",
   "highlighted": true
 }

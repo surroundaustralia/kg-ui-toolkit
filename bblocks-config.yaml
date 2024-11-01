@@ -15,7 +15,7 @@ identifier-prefix: sop.ui.kgtools
 # List of imports ("default" is an alias for the main OGC Building Blocks Register)
 imports:
   # Analytical Transparency Information Framework
-  - https://analytic-transparency.surroundaustralia.github.io/
+  - https://surroundaustralia.github.io/analytic-transparency/
 
 
 # SPARQL configuration (optional)
