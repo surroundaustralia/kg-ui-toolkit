@@ -1,0 +1,36 @@
+
+
+{
+  "itemIdentifier": "sop.ui.kgtools.ai.chat",
+  "name": "AI Chat",
+  "abstract": "AI assistant Chat UI",
+  "status": "under-development",
+  "dateTimeAddition": "2023-05-19T00:00:00Z",
+  "itemClass": "schema",
+  "register": "ccm",
+  "version": "1.0",
+  "dateOfLastChange": "2024-11-01",
+  "sources": [],
+  "maturity": "development",
+  "scope": "unstable",
+  "dependsOn": [
+    "sop.ui.kgtools.wispera"
+  ],
+  "tags": [
+    "prov"
+  ],
+  "group": "Apps",
+  "highlighted": true,
+  "shaclRules": {},
+  "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/ai/chat/",
+  "validationPassed": true,
+  "examples": [
+    {
+      "title": "Test",
+      "content": "UI example with a screen snapshot"
+    }
+  ],
+  "annotatedSchema": null,
+  "gitRepository": "https://github.com/surroundaustralia/kg-ui-toolkit",
+  "gitPath": "_sources/ai/chat"
+}

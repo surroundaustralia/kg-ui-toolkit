@@ -1,0 +1,37 @@
+
+
+{
+  "itemIdentifier": "sop.ui.kgtools.kg-toolkit",
+  "name": "KG UI toolkit",
+  "abstract": "Tools for accessing standard graph patterns in a UI",
+  "status": "under-development",
+  "dateTimeAddition": "2023-05-19T00:00:00Z",
+  "itemClass": "schema",
+  "register": "ccm",
+  "version": "1.0",
+  "dateOfLastChange": "2024-11-01",
+  "sources": [],
+  "maturity": "development",
+  "scope": "unstable",
+  "dependsOn": [
+    "surround.ran.prov.trace",
+    "surround.ran.ui.graphs.radar"
+  ],
+  "tags": [
+    "prov"
+  ],
+  "group": "Apps",
+  "highlighted": true,
+  "shaclRules": {},
+  "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/kg-toolkit/",
+  "validationPassed": true,
+  "examples": [
+    {
+      "title": "Test",
+      "content": "UI example with a screen snapshot"
+    }
+  ],
+  "annotatedSchema": null,
+  "gitRepository": "https://github.com/surroundaustralia/kg-ui-toolkit",
+  "gitPath": "_sources/kg-toolkit"
+}

@@ -1,0 +1,116 @@
+@prefix bblocks: <https://www.opengis.net/def/bblocks/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://surroundaustralia.github.io/sop.ui.kgtools.ai.chat> a skos:Concept,
+        dcat:Dataset,
+        bblocks:Schema ;
+    rdfs:label "AI Chat" ;
+    dct:abstract "AI assistant Chat UI" ;
+    dct:created "2023-05-19T00:00:00+00:00"^^xsd:dateTime ;
+    dct:description [ dct:format "application/json" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/ai/chat/index.json" ],
+        [ dct:format "text/markdown" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/ai/chat/index.md" ],
+        [ dct:format "text/html" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.ai.chat" ] ;
+    dct:hasVersion "1.0" ;
+    dct:modified "2024-11-01"^^xsd:date ;
+    skos:inScheme <https://surroundaustralia.github.io/kg-ui-toolkit/> ;
+    dcat:keyword "prov" ;
+    bblocks:dependsOn <https://surroundaustralia.github.io/sop.ui.kgtools.wispera> ;
+    bblocks:scope <http://www.opengis.net/def/bblocks/scope/unstable> ;
+    bblocks:status <http://www.opengis.net/def/status/under-development> .
+
+<https://surroundaustralia.github.io/sop.ui.kgtools.ai.wispera> a skos:Concept,
+        dcat:Dataset,
+        bblocks:Schema ;
+    rdfs:label "Wispera AI Assitant" ;
+    dct:abstract "API access to the Wispera AI sub-system enables access to multiple AI systems through a common framework." ;
+    dct:created "2023-05-19T00:00:00+00:00"^^xsd:dateTime ;
+    dct:description [ dct:format "text/html" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.ai.wispera" ],
+        [ dct:format "text/markdown" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/ai/wispera/index.md" ],
+        [ dct:format "application/json" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/ai/wispera/index.json" ] ;
+    dct:hasVersion "1.0" ;
+    dct:modified "2024-11-01"^^xsd:date ;
+    skos:inScheme <https://surroundaustralia.github.io/kg-ui-toolkit/> ;
+    dcat:keyword "prov" ;
+    bblocks:scope <http://www.opengis.net/def/bblocks/scope/unstable> ;
+    bblocks:status <http://www.opengis.net/def/status/under-development> .
+
+<https://surroundaustralia.github.io/sop.ui.kgtools.kg-toolkit> a skos:Concept,
+        dcat:Dataset,
+        bblocks:Schema ;
+    rdfs:label "KG UI toolkit" ;
+    dct:abstract "Tools for accessing standard graph patterns in a UI" ;
+    dct:created "2023-05-19T00:00:00+00:00"^^xsd:dateTime ;
+    dct:description [ dct:format "text/html" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.kg-toolkit" ],
+        [ dct:format "text/markdown" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/kg-toolkit/index.md" ],
+        [ dct:format "application/json" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/kg-toolkit/index.json" ] ;
+    dct:hasVersion "1.0" ;
+    dct:modified "2024-11-01"^^xsd:date ;
+    skos:inScheme <https://surroundaustralia.github.io/kg-ui-toolkit/> ;
+    dcat:keyword "prov" ;
+    bblocks:dependsOn <https://surroundaustralia.github.io/surround.ran.prov.trace>,
+        <https://surroundaustralia.github.io/surround.ran.ui.graphs.radar> ;
+    bblocks:scope <http://www.opengis.net/def/bblocks/scope/unstable> ;
+    bblocks:status <http://www.opengis.net/def/status/under-development> .
+
+<https://surroundaustralia.github.io/sop.ui.kgtools.prov.trace> a skos:Concept,
+        dcat:Dataset,
+        bblocks:Schema ;
+    rdfs:label "Provenance Explorer" ;
+    dct:abstract "UI components to display and navigate Provenance using the PROV-O standard" ;
+    dct:created "2023-05-19T00:00:00+00:00"^^xsd:dateTime ;
+    dct:description [ dct:format "application/json" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/prov/trace/index.json" ],
+        [ dct:format "text/html" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.prov.trace" ],
+        [ dct:format "text/markdown" ;
+            rdfs:isDefinedBy "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/prov/trace/index.md" ] ;
+    dct:hasVersion "1.0" ;
+    dct:modified "2024-11-01"^^xsd:date ;
+    skos:inScheme <https://surroundaustralia.github.io/kg-ui-toolkit/> ;
+    dcat:keyword "prov" ;
+    bblocks:dependsOn <https://surroundaustralia.github.io/sop.at.activities.derivation>,
+        <https://surroundaustralia.github.io/sop.at.entities.dataset> ;
+    bblocks:hasShaclRule <http://qudt.org/2.1/schema/shacl/qudt> ;
+    bblocks:scope <http://www.opengis.net/def/bblocks/scope/unstable> ;
+    bblocks:status <http://www.opengis.net/def/status/under-development> .
+
+<https://surroundaustralia.github.io/kg-ui-toolkit/> a skos:ConceptScheme,
+        dcat:Catalog ;
+    rdfs:label "Building Blocks - Knowledge Graph UI toolkit" ;
+    dct:abstract """Rust UI components for interacting with standard knowledge graph patterns. 
+""" ;
+    skos:prefLabel "Building Blocks - Knowledge Graph UI toolkit" ;
+    bblocks:hasValidationReport <https://surroundaustralia.github.io/kg-ui-toolkit/build/tests/report.html> ;
+    bblocks:imports <https://surroundaustralia.github.io/analytic-transparency/build/register.json> .
+
+[] a prov:Activity ;
+    prov:endedAtTime "2024-11-01T00:10:16.214809"^^xsd:dateTime ;
+    prov:startedAtTime "2024-11-01T00:10:16.145881"^^xsd:dateTime ;
+    prov:used [ a prov:Entity ;
+            dct:format "application/json" ;
+            dct:hasVersion "git:213cb4c2011aabe1345c82a9386df15c09c2365f" ;
+            rdfs:seeAlso <https://surroundaustralia.github.io/kg-ui-toolkit/build/register.json> ],
+        [ a prov:Entity ;
+            dct:format "application/yaml" ;
+            rdfs:seeAlso <file:///src/ogc/bblocks/register-context.yaml> ] ;
+    prov:wasAssociatedWith [ a prov:Agent,
+                schema:SoftwareApplication ;
+            rdfs:label "OGC-NA tools" ;
+            dct:hasVersion "0.3.54" ;
+            rdfs:seeAlso <https://github.com/opengeospatial/ogc-na-tools> ] .
+

@@ -1,0 +1,35 @@
+
+
+{
+  "itemIdentifier": "sop.ui.kgtools.prov.trace",
+  "name": "Provenance Explorer",
+  "abstract": "UI components to display and navigate Provenance using the PROV-O standard",
+  "status": "under-development",
+  "dateTimeAddition": "2023-05-19T00:00:00Z",
+  "itemClass": "schema",
+  "register": "ccm",
+  "version": "1.0",
+  "dateOfLastChange": "2024-11-01",
+  "sources": [],
+  "maturity": "development",
+  "scope": "unstable",
+  "dependsOn": [
+    "sop.at.activities.derivation",
+    "sop.at.entities.dataset"
+  ],
+  "tags": [
+    "prov"
+  ],
+  "group": "Activities",
+  "highlighted": true,
+  "shaclRules": {
+    "ogc.model.cross-domain.prov": [
+      "http://qudt.org/2.1/schema/shacl/qudt"
+    ]
+  },
+  "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/prov/trace/",
+  "validationPassed": true,
+  "annotatedSchema": null,
+  "gitRepository": "https://github.com/surroundaustralia/kg-ui-toolkit",
+  "gitPath": "_sources/prov/trace"
+}

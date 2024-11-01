@@ -1,0 +1,34 @@
+
+
+{
+  "itemIdentifier": "sop.ui.kgtools.ai.wispera",
+  "name": "Wispera AI Assitant",
+  "abstract": "API access to the Wispera AI sub-system enables access to multiple AI systems through a common framework.",
+  "status": "under-development",
+  "dateTimeAddition": "2023-05-19T00:00:00Z",
+  "itemClass": "schema",
+  "register": "ccm",
+  "version": "1.0",
+  "dateOfLastChange": "2024-11-01",
+  "sources": [],
+  "maturity": "development",
+  "scope": "unstable",
+  "dependsOn": [],
+  "tags": [
+    "prov"
+  ],
+  "group": "Apps",
+  "highlighted": true,
+  "shaclRules": {},
+  "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/ai/wispera/",
+  "validationPassed": true,
+  "examples": [
+    {
+      "title": "Test",
+      "content": "UI example with a screen snapshot"
+    }
+  ],
+  "annotatedSchema": null,
+  "gitRepository": "https://github.com/surroundaustralia/kg-ui-toolkit",
+  "gitPath": "_sources/ai/wispera"
+}

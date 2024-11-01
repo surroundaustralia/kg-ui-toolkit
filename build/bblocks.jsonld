@@ -1,0 +1,311 @@
+{
+  "@context": [
+    {
+      "@base": "https://surroundaustralia.github.io/kg-ui-toolkit"
+    },
+    {
+      "bblocks": "https://www.opengis.net/def/bblocks/",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dct": "http://purl.org/dc/terms/",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "prof": "http://www.w3.org/ns/dx/prof/",
+      "dcat": "http://www.w3.org/ns/dcat#",
+      "modspec": "http://www.opengis.net/def/ont/modspec/",
+      "itemIdentifier": "@id",
+      "baseURL": "@id",
+      "name": "rdfs:label",
+      "abstract": "dct:abstract",
+      "description": "dct:description",
+      "status": {
+        "@id": "bblocks:status",
+        "@type": "@id",
+        "@context": {
+          "@base": "http://www.opengis.net/def/status/"
+        }
+      },
+      "dateTimeAddition": {
+        "@id": "dct:created",
+        "@type": "xsd:dateTime"
+      },
+      "version": "dct:hasVersion",
+      "dateOfLastChange": {
+        "@id": "dct:modified",
+        "@type": "xsd:date"
+      },
+      "scope": {
+        "@id": "bblocks:scope",
+        "@type": "@id",
+        "@context": {
+          "@base": "http://www.opengis.net/def/bblocks/scope/"
+        }
+      },
+      "sources": {
+        "@id": "dct:source",
+        "@context": {
+          "title": "rdfs:label",
+          "link": "@id"
+        }
+      },
+      "schema": {
+        "@id": "bblocks:hasSchema",
+        "@type": "@id",
+        "@container": "@index",
+        "@index": "dct:format"
+      },
+      "ldContext": {
+        "@id": "bblocks:hasJsonLdContext",
+        "@type": "@id"
+      },
+      "sourceLdContext": {
+        "@id": "bblocks:hasSourceJsonLdContext",
+        "@type": "@id"
+      },
+      "documentation": {
+        "@id": "dct:description",
+        "@type": "@id",
+        "@container": "@index",
+        "@index": "dct:identifier",
+        "@context": {
+          "mediatype": "dct:format",
+          "url": "rdfs:isDefinedBy"
+        }
+      },
+      "hasConcepts": {
+        "@reverse": "skos:inScheme"
+      },
+      "dependsOn": {
+        "@id": "bblocks:dependsOn",
+        "@type": "@id"
+      },
+      "profileOf": {
+        "@id": "prof:isProfileOf",
+        "@type": "@id"
+      },
+      "tags": "dcat:keyword",
+      "shaclRules": {
+        "@id": "bblocks:hasShaclRule",
+        "@type": "@id",
+        "@container": "@index",
+        "@index": "rdfs:seeAlso"
+      },
+      "validationReport": {
+        "@id": "bblocks:hasValidationReport",
+        "@type": "@id"
+      },
+      "imports": {
+        "@id": "bblocks:imports",
+        "@type": "@id"
+      },
+      "conformanceClasses": {
+        "@id": "modspec:class",
+        "@type": "@id"
+      }
+    }
+  ],
+  "name": "Building Blocks - Knowledge Graph UI toolkit",
+  "abstract": "Rust UI components for interacting with standard knowledge graph patterns. \n",
+  "modified": "2024-11-01T00:10:14.277195",
+  "tooling": {
+    "bblocks-postprocess": {
+      "commitId": "\"bff70fac492a7e2f3fe3779b0b9b150f4e315e8f",
+      "shortCommitId": "\"bff70f",
+      "date": "2024-10-30T09:32:11+00:00\""
+    }
+  },
+  "gitRepository": "https://github.com/surroundaustralia/kg-ui-toolkit",
+  "gitHubRepository": "https://github.com/surroundaustralia/kg-ui-toolkit/blob/main/",
+  "baseURL": "https://surroundaustralia.github.io/kg-ui-toolkit/",
+  "viewerURL": "https://surroundaustralia.github.io/kg-ui-toolkit/",
+  "validationReport": "https://surroundaustralia.github.io/kg-ui-toolkit/build/tests/report.html",
+  "imports": [
+    "https://surroundaustralia.github.io/analytic-transparency/build/register.json"
+  ],
+  "@type": [
+    "skos:ConceptScheme",
+    "dcat:Catalog"
+  ],
+  "skos:prefLabel": "Building Blocks - Knowledge Graph UI toolkit",
+  "hasConcepts": [
+    {
+      "itemIdentifier": "sop.ui.kgtools.ai.wispera",
+      "name": "Wispera AI Assitant",
+      "abstract": "API access to the Wispera AI sub-system enables access to multiple AI systems through a common framework.",
+      "status": "under-development",
+      "dateTimeAddition": "2023-05-19T00:00:00Z",
+      "itemClass": "schema",
+      "register": "ccm",
+      "version": "1.0",
+      "dateOfLastChange": "2024-11-01",
+      "sources": [],
+      "maturity": "development",
+      "scope": "unstable",
+      "dependsOn": [],
+      "tags": [
+        "prov"
+      ],
+      "group": "Apps",
+      "highlighted": true,
+      "shaclRules": {},
+      "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/ai/wispera/",
+      "validationPassed": true,
+      "documentation": {
+        "markdown": {
+          "mediatype": "text/markdown",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/ai/wispera/index.md"
+        },
+        "json-full": {
+          "mediatype": "application/json",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/ai/wispera/index.json"
+        },
+        "bblocks-viewer": {
+          "mediatype": "text/html",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.ai.wispera"
+        }
+      },
+      "@type": [
+        "bblocks:Schema",
+        "skos:Concept",
+        "dcat:Dataset"
+      ]
+    },
+    {
+      "itemIdentifier": "sop.ui.kgtools.ai.chat",
+      "name": "AI Chat",
+      "abstract": "AI assistant Chat UI",
+      "status": "under-development",
+      "dateTimeAddition": "2023-05-19T00:00:00Z",
+      "itemClass": "schema",
+      "register": "ccm",
+      "version": "1.0",
+      "dateOfLastChange": "2024-11-01",
+      "sources": [],
+      "maturity": "development",
+      "scope": "unstable",
+      "dependsOn": [
+        "sop.ui.kgtools.wispera"
+      ],
+      "tags": [
+        "prov"
+      ],
+      "group": "Apps",
+      "highlighted": true,
+      "shaclRules": {},
+      "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/ai/chat/",
+      "validationPassed": true,
+      "documentation": {
+        "markdown": {
+          "mediatype": "text/markdown",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/ai/chat/index.md"
+        },
+        "json-full": {
+          "mediatype": "application/json",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/ai/chat/index.json"
+        },
+        "bblocks-viewer": {
+          "mediatype": "text/html",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.ai.chat"
+        }
+      },
+      "@type": [
+        "bblocks:Schema",
+        "skos:Concept",
+        "dcat:Dataset"
+      ]
+    },
+    {
+      "itemIdentifier": "sop.ui.kgtools.kg-toolkit",
+      "name": "KG UI toolkit",
+      "abstract": "Tools for accessing standard graph patterns in a UI",
+      "status": "under-development",
+      "dateTimeAddition": "2023-05-19T00:00:00Z",
+      "itemClass": "schema",
+      "register": "ccm",
+      "version": "1.0",
+      "dateOfLastChange": "2024-11-01",
+      "sources": [],
+      "maturity": "development",
+      "scope": "unstable",
+      "dependsOn": [
+        "surround.ran.prov.trace",
+        "surround.ran.ui.graphs.radar"
+      ],
+      "tags": [
+        "prov"
+      ],
+      "group": "Apps",
+      "highlighted": true,
+      "shaclRules": {},
+      "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/kg-toolkit/",
+      "validationPassed": true,
+      "documentation": {
+        "markdown": {
+          "mediatype": "text/markdown",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/kg-toolkit/index.md"
+        },
+        "json-full": {
+          "mediatype": "application/json",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/kg-toolkit/index.json"
+        },
+        "bblocks-viewer": {
+          "mediatype": "text/html",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.kg-toolkit"
+        }
+      },
+      "@type": [
+        "bblocks:Schema",
+        "skos:Concept",
+        "dcat:Dataset"
+      ]
+    },
+    {
+      "itemIdentifier": "sop.ui.kgtools.prov.trace",
+      "name": "Provenance Explorer",
+      "abstract": "UI components to display and navigate Provenance using the PROV-O standard",
+      "status": "under-development",
+      "dateTimeAddition": "2023-05-19T00:00:00Z",
+      "itemClass": "schema",
+      "register": "ccm",
+      "version": "1.0",
+      "dateOfLastChange": "2024-11-01",
+      "sources": [],
+      "maturity": "development",
+      "scope": "unstable",
+      "dependsOn": [
+        "sop.at.activities.derivation",
+        "sop.at.entities.dataset"
+      ],
+      "tags": [
+        "prov"
+      ],
+      "group": "Activities",
+      "highlighted": true,
+      "shaclRules": {
+        "ogc.model.cross-domain.prov": [
+          "http://qudt.org/2.1/schema/shacl/qudt"
+        ]
+      },
+      "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/prov/trace/",
+      "validationPassed": true,
+      "documentation": {
+        "markdown": {
+          "mediatype": "text/markdown",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/prov/trace/index.md"
+        },
+        "json-full": {
+          "mediatype": "application/json",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/prov/trace/index.json"
+        },
+        "bblocks-viewer": {
+          "mediatype": "text/html",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.prov.trace"
+        }
+      },
+      "@type": [
+        "bblocks:Schema",
+        "skos:Concept",
+        "dcat:Dataset"
+      ]
+    }
+  ]
+}
