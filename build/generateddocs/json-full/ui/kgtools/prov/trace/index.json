@@ -14,8 +14,8 @@
   "maturity": "development",
   "scope": "unstable",
   "dependsOn": [
-    "sop.at.activities.derivation",
-    "sop.at.entities.dataset"
+    "sop.at.entities.dataset",
+    "sop.at.activities.derivation"
   ],
   "tags": [
     "prov"

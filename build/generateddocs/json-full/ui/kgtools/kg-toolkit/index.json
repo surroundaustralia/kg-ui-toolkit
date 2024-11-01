@@ -14,15 +14,19 @@
   "maturity": "development",
   "scope": "unstable",
   "dependsOn": [
-    "surround.ran.prov.trace",
-    "surround.ran.ui.graphs.radar"
+    "sop.ui.kgtools.prov.trace",
+    "sop.ui.kgtools.ai.chat"
   ],
   "tags": [
     "prov"
   ],
   "group": "Apps",
   "highlighted": true,
-  "shaclRules": {},
+  "shaclRules": {
+    "ogc.model.cross-domain.prov": [
+      "http://qudt.org/2.1/schema/shacl/qudt"
+    ]
+  },
   "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/kg-toolkit/",
   "validationPassed": true,
   "examples": [

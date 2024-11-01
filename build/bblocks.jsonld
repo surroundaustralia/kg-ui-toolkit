@@ -105,7 +105,7 @@
   ],
   "name": "Building Blocks - Knowledge Graph UI toolkit",
   "abstract": "Rust UI components for interacting with standard knowledge graph patterns. \n",
-  "modified": "2024-11-01T00:10:14.277195",
+  "modified": "2024-11-01T00:19:53.313679",
   "tooling": {
     "bblocks-postprocess": {
       "commitId": "\"bff70fac492a7e2f3fe3779b0b9b150f4e315e8f",
@@ -214,51 +214,6 @@
       ]
     },
     {
-      "itemIdentifier": "sop.ui.kgtools.kg-toolkit",
-      "name": "KG UI toolkit",
-      "abstract": "Tools for accessing standard graph patterns in a UI",
-      "status": "under-development",
-      "dateTimeAddition": "2023-05-19T00:00:00Z",
-      "itemClass": "schema",
-      "register": "ccm",
-      "version": "1.0",
-      "dateOfLastChange": "2024-11-01",
-      "sources": [],
-      "maturity": "development",
-      "scope": "unstable",
-      "dependsOn": [
-        "surround.ran.prov.trace",
-        "surround.ran.ui.graphs.radar"
-      ],
-      "tags": [
-        "prov"
-      ],
-      "group": "Apps",
-      "highlighted": true,
-      "shaclRules": {},
-      "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/kg-toolkit/",
-      "validationPassed": true,
-      "documentation": {
-        "markdown": {
-          "mediatype": "text/markdown",
-          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/kg-toolkit/index.md"
-        },
-        "json-full": {
-          "mediatype": "application/json",
-          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/kg-toolkit/index.json"
-        },
-        "bblocks-viewer": {
-          "mediatype": "text/html",
-          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.kg-toolkit"
-        }
-      },
-      "@type": [
-        "bblocks:Schema",
-        "skos:Concept",
-        "dcat:Dataset"
-      ]
-    },
-    {
       "itemIdentifier": "sop.ui.kgtools.prov.trace",
       "name": "Provenance Explorer",
       "abstract": "UI components to display and navigate Provenance using the PROV-O standard",
@@ -272,8 +227,8 @@
       "maturity": "development",
       "scope": "unstable",
       "dependsOn": [
-        "sop.at.activities.derivation",
-        "sop.at.entities.dataset"
+        "sop.at.entities.dataset",
+        "sop.at.activities.derivation"
       ],
       "tags": [
         "prov"
@@ -299,6 +254,55 @@
         "bblocks-viewer": {
           "mediatype": "text/html",
           "url": "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.prov.trace"
+        }
+      },
+      "@type": [
+        "bblocks:Schema",
+        "skos:Concept",
+        "dcat:Dataset"
+      ]
+    },
+    {
+      "itemIdentifier": "sop.ui.kgtools.kg-toolkit",
+      "name": "KG UI toolkit",
+      "abstract": "Tools for accessing standard graph patterns in a UI",
+      "status": "under-development",
+      "dateTimeAddition": "2023-05-19T00:00:00Z",
+      "itemClass": "schema",
+      "register": "ccm",
+      "version": "1.0",
+      "dateOfLastChange": "2024-11-01",
+      "sources": [],
+      "maturity": "development",
+      "scope": "unstable",
+      "dependsOn": [
+        "sop.ui.kgtools.prov.trace",
+        "sop.ui.kgtools.ai.chat"
+      ],
+      "tags": [
+        "prov"
+      ],
+      "group": "Apps",
+      "highlighted": true,
+      "shaclRules": {
+        "ogc.model.cross-domain.prov": [
+          "http://qudt.org/2.1/schema/shacl/qudt"
+        ]
+      },
+      "sourceFiles": "https://surroundaustralia.github.io/kg-ui-toolkit/_sources/kg-toolkit/",
+      "validationPassed": true,
+      "documentation": {
+        "markdown": {
+          "mediatype": "text/markdown",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/markdown/ui/kgtools/kg-toolkit/index.md"
+        },
+        "json-full": {
+          "mediatype": "application/json",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/build/generateddocs/json-full/ui/kgtools/kg-toolkit/index.json"
+        },
+        "bblocks-viewer": {
+          "mediatype": "text/html",
+          "url": "https://surroundaustralia.github.io/kg-ui-toolkit/bblock/sop.ui.kgtools.kg-toolkit"
         }
       },
       "@type": [
