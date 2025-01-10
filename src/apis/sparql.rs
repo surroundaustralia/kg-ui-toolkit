@@ -1,11 +1,16 @@
 use chrono::{DateTime, Utc};
 use gloo_net::http::Request;
+use gloo_net::Error::GlooError;
 use implicit_clone::unsync::IString;
 use std::rc::Rc;
 
 use geojson::GeoJson;
 
 use serde::Deserialize;
+
+use oxigraph::store::Store;
+use oxigraph::sparql::QueryResults;
+use oxigraph::sparql::results::{QueryResultsSerializer, QueryResultsFormat};
 
 use crate::models;
 
@@ -79,108 +84,228 @@ pub struct Response<B> {
     pub results: Results<B>,
 }
 
-// Requests
+#[allow(async_fn_in_trait)]
+pub trait TripleStore {
+    async fn get_activity(&self, activity_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+        // FIXME: What's the SPARQL this runs? I just see stored procedures!
+        Err(GlooError("Unimplemented!".to_string()))
+    }
+    async fn get_agent(&self, agent_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+        // FIXME: What's the SPARQL this runs? I just see stored procedures!
+        Err(GlooError("Unimplemented!".to_string()))
+    }
+    async fn get_dim_desc(&self, entity_id: &str) -> Result<Response<DimDescBinding>, gloo_net::Error> {
+        // FIXME: What's the SPARQL this runs? I just see stored procedures!
+        Err(GlooError("Unimplemented!".to_string()))
+    }
+    async fn get_dim_values(&self, entity_id: &str) -> Result<Response<DimValueBinding>, gloo_net::Error> {
+        // FIXME: What's the SPARQL this runs? I just see stored procedures!
+        Err(GlooError("Unimplemented!".to_string()))
+    }
+    async fn get_entity(&self, entity_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+        // FIXME: What's the SPARQL this runs? I just see stored procedures!
+        Err(GlooError("Unimplemented!".to_string()))
+    }
+    async fn get_spatial_entity(&self, entity_id: &str) -> Result<Response<SpatialEntityBinding>, gloo_net::Error> {
+        // FIXME: What's the SPARQL this runs? I just see stored procedures!
+        Err(GlooError("Unimplemented!".to_string()))
+    }
+    async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error>;
+}
+
+// Remote implementation
+
+pub struct RemoteTripleStore(pub String);
+
+impl TripleStore for RemoteTripleStore {
+    async fn get_activity(&self, activity_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+        let api_path = &self.0;
+        let result = Request::get(&format!(
+            "{api_path}/query?query=getActivity&$activity=<{activity_id}>"
+        ))
+        .header("Accept", "application/sparql-results+json")
+        .send()
+        .await;
+
+        match result {
+            Ok(r) => r.json().await,
+            Err(e) => Err(e),
+        }
+    }
+
+    async fn get_agent(&self, agent_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+        let api_path = &self.0;
+        let result = Request::get(&format!(
+            "{api_path}/query?query=getAgent&$agent=<{agent_id}>"
+        ))
+        .header("Accept", "application/sparql-results+json")
+        .send()
+        .await;
+
+        match result {
+            Ok(r) => r.json().await,
+            Err(e) => Err(e),
+        }
+    }
+
+    async fn get_dim_desc(&self, entity_id: &str) -> Result<Response<DimDescBinding>, gloo_net::Error> {
+        let api_path = &self.0;
+        let result = Request::get(&format!(
+            "{api_path}/query?query=getDimDesc&$object=<{entity_id}>"
+        ))
+        .header("Accept", "application/sparql-results+json")
+        .send()
+        .await;
+
+        match result {
+            Ok(r) => r.json().await,
+            Err(e) => Err(e),
+        }
+    }
+
+    async fn get_dim_values(&self, entity_id: &str) -> Result<Response<DimValueBinding>, gloo_net::Error> {
+        let api_path = &self.0;
+        let result = Request::get(&format!(
+            "{api_path}/query?query=getDimValues&$object=<{entity_id}>"
+        ))
+        .header("Accept", "application/sparql-results+json")
+        .send()
+        .await;
+
+        match result {
+            Ok(r) => r.json().await,
+            Err(e) => Err(e),
+        }
+    }
+
+    async fn get_entity(&self, entity_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
+        let api_path = &self.0;
+        let result = Request::get(&format!(
+            "{api_path}/query?query=getEntity&$entity=<{entity_id}>"
+        ))
+        .header("Accept", "application/sparql-results+json")
+        .send()
+        .await;
+
+        match result {
+            Ok(r) => r.json().await,
+            Err(e) => Err(e),
+        }
+    }
+
+    async fn get_spatial_entity(&self, entity_id: &str) -> Result<Response<SpatialEntityBinding>, gloo_net::Error> {
+        let api_path = &self.0;
+        let result = Request::get(&format!(
+            "{api_path}/query?query=getSpatialEntity&$entity=<{entity_id}>"
+        ))
+        .header("Accept", "application/sparql-results+json")
+        .send()
+        .await;
+
+        match result {
+            Ok(r) => r.json().await,
+            Err(e) => Err(e),
+        }
+    }
+
+    async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error> {
+        let api_path = &self.0;
+        let result = Request::get(&format!(
+            "{api_path}/query?query=<{sparql}>"
+        ))
+        .header("Accept", "application/sparql-results+json")
+        .send()
+        .await;
+
+        match result {
+            Ok(r) => r.json().await,
+            Err(e) => Err(e),
+        }
+    }
+}
+
+// Standalone implementation
+
+pub struct Oxigraph(pub Store);
+
+impl TripleStore for Oxigraph {
+    async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error> {
+        match self.0.query(sparql) {
+            Ok(QueryResults::Solutions(solutions)) => {
+                let mut buf = Vec::new();
+                let serializer = QueryResultsSerializer::from_format(QueryResultsFormat::Json);
+                let outputter = serializer.serialize_solutions_to_writer(&mut buf, solutions.variables().to_vec());
+                if let Ok(mut json_serializer) = outputter {
+                    for result in solutions {
+                        match result {
+                            Ok(res) => {
+                                if let Err(e) = json_serializer.serialize(res.iter()) {
+                                    return Err(GlooError(format!("Serialization error: {e}")));
+                                }
+                            }
+                            Err(e) => return Err(GlooError(format!("Query error: {e}")))
+                        }
+                    }
+                    if let Err(e) = json_serializer.finish() {
+                        return Err(GlooError(format!("Serialization error: {e}")));
+                    }
+
+                    match serde_json::from_slice(&buf) {
+                        Ok(res) => Ok(res),
+                        Err(e) => Err(GlooError(format!("Reformatting error: {e}")))
+                    }
+                } else {
+                    Err(GlooError("Failed to initialize serializer!".to_string()))
+                }
+            }
+            Ok(_) => Err(GlooError("Unexpected response format!".to_string())),
+            Err(e) => Err(GlooError(format!("Query error: {e}")))
+        }
+    }
+}
+
+// Old API
 
 pub async fn get_activity(
     api_path: &str,
     activity_id: &str,
 ) -> Result<Response<ObjectBinding>, gloo_net::Error> {
-    let result = Request::get(&format!(
-        "{api_path}/query?query=getActivity&$activity=<{activity_id}>"
-    ))
-    .header("Accept", "application/sparql-results+json")
-    .send()
-    .await;
-
-    match result {
-        Ok(r) => r.json().await,
-        Err(e) => Err(e),
-    }
+    RemoteTripleStore(api_path.to_string()).get_activity(activity_id).await
 }
 
 pub async fn get_agent(
     api_path: &str,
     agent_id: &str,
 ) -> Result<Response<ObjectBinding>, gloo_net::Error> {
-    let result = Request::get(&format!(
-        "{api_path}/query?query=getAgent&$agent=<{agent_id}>"
-    ))
-    .header("Accept", "application/sparql-results+json")
-    .send()
-    .await;
-
-    match result {
-        Ok(r) => r.json().await,
-        Err(e) => Err(e),
-    }
+    RemoteTripleStore(api_path.to_string()).get_agent(agent_id).await
 }
 
 pub async fn get_dim_desc(
     api_path: &str,
     entity_id: &str,
 ) -> Result<Response<DimDescBinding>, gloo_net::Error> {
-    let result = Request::get(&format!(
-        "{api_path}/query?query=getDimDesc&$object=<{entity_id}>"
-    ))
-    .header("Accept", "application/sparql-results+json")
-    .send()
-    .await;
-
-    match result {
-        Ok(r) => r.json().await,
-        Err(e) => Err(e),
-    }
+    RemoteTripleStore(api_path.to_string()).get_dim_desc(entity_id).await
 }
 
 pub async fn get_dim_values(
     api_path: &str,
     entity_id: &str,
 ) -> Result<Response<DimValueBinding>, gloo_net::Error> {
-    let result = Request::get(&format!(
-        "{api_path}/query?query=getDimValues&$object=<{entity_id}>"
-    ))
-    .header("Accept", "application/sparql-results+json")
-    .send()
-    .await;
-
-    match result {
-        Ok(r) => r.json().await,
-        Err(e) => Err(e),
-    }
+    RemoteTripleStore(api_path.to_string()).get_dim_values(entity_id).await
 }
 
 pub async fn get_entity(
     api_path: &str,
     entity_id: &str,
 ) -> Result<Response<ObjectBinding>, gloo_net::Error> {
-    let result = Request::get(&format!(
-        "{api_path}/query?query=getEntity&$entity=<{entity_id}>"
-    ))
-    .header("Accept", "application/sparql-results+json")
-    .send()
-    .await;
-
-    match result {
-        Ok(r) => r.json().await,
-        Err(e) => Err(e),
-    }
+    RemoteTripleStore(api_path.to_string()).get_entity(entity_id).await
 }
 
 pub async fn get_spatial_entity(
     api_path: &str,
     entity_id: &str,
 ) -> Result<Response<SpatialEntityBinding>, gloo_net::Error> {
-    let result = Request::get(&format!(
-        "{api_path}/query?query=getSpatialEntity&$entity=<{entity_id}>"
-    ))
-    .header("Accept", "application/sparql-results+json")
-    .send()
-    .await;
-
-    match result {
-        Ok(r) => r.json().await,
-        Err(e) => Err(e),
-    }
+    RemoteTripleStore(api_path.to_string()).get_spatial_entity(entity_id).await
 }
 
 // Response processing

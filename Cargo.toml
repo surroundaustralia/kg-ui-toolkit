@@ -19,3 +19,4 @@ serde_json = { workspace = true }
 web-sys = { workspace = true, features = [ "HtmlAnchorElement" ] }
 yew = { workspace = true, features = ["csr"] }
 yew-chart = { workspace = true }
+oxigraph = { version = "*", default-features = false }
