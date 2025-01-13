@@ -3,6 +3,7 @@ use gloo_net::http::Request;
 use gloo_net::Error::GlooError;
 use implicit_clone::unsync::IString;
 use std::rc::Rc;
+use std::sync::Arc;
 
 use geojson::GeoJson;
 
@@ -10,6 +11,7 @@ use serde::Deserialize;
 
 use oxigraph::store::Store;
 use oxigraph::sparql::QueryResults;
+use oxigraph::io::RdfFormat;
 use oxigraph::sparql::results::{QueryResultsSerializer, QueryResultsFormat};
 
 use crate::models;
@@ -87,30 +89,93 @@ pub struct Response<B> {
 #[allow(async_fn_in_trait)]
 pub trait TripleStore {
     async fn get_activity(&self, activity_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
-        // FIXME: What's the SPARQL this runs? I just see stored procedures!
-        Err(GlooError("Unimplemented!".to_string()))
+        self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
+SELECT DISTINCT ($input AS $activity) ?p ?plabel ?o ?olabel
+WHERE {
+    $input  ?p ?o .
+    OPTIONAL { ?p rdfs:label ?plabel }
+    OPTIONAL { ?o rdfs:label ?olabel }
+    OPTIONAL {
+    FILTER(isBlank(?o))
+    ?o rdfs:label ?blankNodeLabel .
+  }
+}", activity_id).await
     }
     async fn get_agent(&self, agent_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
-        // FIXME: What's the SPARQL this runs? I just see stored procedures!
-        Err(GlooError("Unimplemented!".to_string()))
+        self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
+SELECT ($input AS $agent) ?p ?plabel ?o ?olabel
+WHERE {
+    $input  ?p ?o .
+    OPTIONAL { ?p rdfs:label ?plabel }
+    OPTIONAL { ?o rdfs:label ?olabel }
+    OPTIONAL {
+    FILTER(isBlank(?o))
+    ?o rdfs:label ?blankNodeLabel .
+  }
+}", agent_id).await
     }
     async fn get_dim_desc(&self, entity_id: &str) -> Result<Response<DimDescBinding>, gloo_net::Error> {
-        // FIXME: What's the SPARQL this runs? I just see stored procedures!
-        Err(GlooError("Unimplemented!".to_string()))
+        self.query_with("prefix dim:     <https://surroundaustralia.com/models/datadimensions/>
+prefix sdo:    <https://schema.org/>
+SELECT DISTINCT ?targetRange ?name?order ?dimRange
+WHERE
+{
+    $input dim:value ?dv .
+    OPTIONAL{ $input dim:targetRange ?targetRange }
+    ?dv dim:dimension ?d .
+    ?d rdfs:label ?name .
+
+    OPTIONAL { ?d dim:order ?order }
+    OPTIONAL { ?d dim:maxValue ?dimRange }
+
+}", entity_id).await
     }
     async fn get_dim_values(&self, entity_id: &str) -> Result<Response<DimValueBinding>, gloo_net::Error> {
-        // FIXME: What's the SPARQL this runs? I just see stored procedures!
-        Err(GlooError("Unimplemented!".to_string()))
+        self.query_with("prefix dim:     <https://surroundaustralia.com/models/datadimensions/>
+prefix sdo:    <https://schema.org/>
+SELECT ?d ?v
+WHERE
+{
+    $object dim:value ?dv .
+    ?dv sdo:value ?v .
+    ?dv dim:dimension/rdfs:label ?d .
+    # ?d rdfs:label ?l
+    # ?dc dim:dimension/dim:order ?order .
+    # ?dc dim:dimension/dim:order ?order .
+}
+", entity_id).await
     }
     async fn get_entity(&self, entity_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
-        // FIXME: What's the SPARQL this runs? I just see stored procedures!
-        Err(GlooError("Unimplemented!".to_string()))
+        self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+prefix geo:    <http://www.opengis.net/ont/geosparql#>
+SELECT $entity ?p ?plabel ?o ?olabel ?blankNodeLabel
+WHERE {
+    $entity  ?p ?o .
+    OPTIONAL { ?p rdfs:label ?plabel }
+    OPTIONAL { ?o rdfs:label ?olabel }
+    FILTER ( ?p != geo:hasGeometry )
+       OPTIONAL {
+    FILTER(isBlank(?o))
+    ?o rdfs:label ?blankNodeLabel .
+  }
+}", entity_id).await
     }
     async fn get_spatial_entity(&self, entity_id: &str) -> Result<Response<SpatialEntityBinding>, gloo_net::Error> {
-        // FIXME: What's the SPARQL this runs? I just see stored procedures!
-        Err(GlooError("Unimplemented!".to_string()))
+        self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
+prefix geo:    <http://www.opengis.net/ont/geosparql#>
+SELECT $entity ?label  ?geojson ?wkt
+WHERE {
+    $entity geo:hasGeometry ?g .
+    OPTIONAL { ?g geo:asGeoJSON ?geojson }
+    OPTIONAL { ?g geo:asWKT ?wkt }
+    OPTIONAL { $entity rdfs:label ?label }
+}", entity_id).await
     }
-    async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error>;
+    async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error> {
+        self.query_with(sparql, "").await
+    }
+    async fn query_with<T: for<'a> Deserialize<'a>>(&self, sparql: &str, param: &str) -> Result<Response<T>, gloo_net::Error>;
 }
 
 // Remote implementation
@@ -208,10 +273,10 @@ impl TripleStore for RemoteTripleStore {
         }
     }
 
-    async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error> {
+    async fn query_with<T: for<'a> Deserialize<'a>>(&self, sparql: &str, param: &str) -> Result<Response<T>, gloo_net::Error> {
         let api_path = &self.0;
         let result = Request::get(&format!(
-            "{api_path}/query?query=<{sparql}>"
+            "{api_path}/query?query=<{sparql}>&$input=<{param}>"
         ))
         .header("Accept", "application/sparql-results+json")
         .send()
@@ -226,11 +291,23 @@ impl TripleStore for RemoteTripleStore {
 
 // Standalone implementation
 
-pub struct Oxigraph(pub Store);
+#[derive(Clone)]
+pub struct Oxigraph(pub Arc<Store>);
+
+pub fn load_test_triplestore() -> Oxigraph {
+    let store = Store::new().unwrap();
+    let file = include_bytes!("../../sample_data/auv-tag-stardog.trig");
+    match store.bulk_loader().load_from_reader(RdfFormat::TriG, file.as_ref()) {
+        Err(e) => eprintln!("Failed to load sample data: {}", e),
+        _ => ()
+    }
+    return Oxigraph(store.into());
+}
 
 impl TripleStore for Oxigraph {
-    async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error> {
-        match self.0.query(sparql) {
+    async fn query_with<T: for<'a> Deserialize<'a>>(&self, sparql: &str, param: &str) -> Result<Response<T>, gloo_net::Error> {
+        // Quite hacky until next release of Oxigraph, but should be safe!
+        match self.0.query(&sparql.replace("$input", &("<".to_owned() + &param.replace(">", "%3E") + ">"))) {
             Ok(QueryResults::Solutions(solutions)) => {
                 let mut buf = Vec::new();
                 let serializer = QueryResultsSerializer::from_format(QueryResultsFormat::Json);
@@ -266,6 +343,7 @@ impl TripleStore for Oxigraph {
 
 // Old API
 
+#[deprecated]
 pub async fn get_activity(
     api_path: &str,
     activity_id: &str,
@@ -273,6 +351,7 @@ pub async fn get_activity(
     RemoteTripleStore(api_path.to_string()).get_activity(activity_id).await
 }
 
+#[deprecated]
 pub async fn get_agent(
     api_path: &str,
     agent_id: &str,
@@ -280,6 +359,7 @@ pub async fn get_agent(
     RemoteTripleStore(api_path.to_string()).get_agent(agent_id).await
 }
 
+#[deprecated]
 pub async fn get_dim_desc(
     api_path: &str,
     entity_id: &str,
@@ -287,6 +367,7 @@ pub async fn get_dim_desc(
     RemoteTripleStore(api_path.to_string()).get_dim_desc(entity_id).await
 }
 
+#[deprecated]
 pub async fn get_dim_values(
     api_path: &str,
     entity_id: &str,
@@ -294,6 +375,7 @@ pub async fn get_dim_values(
     RemoteTripleStore(api_path.to_string()).get_dim_values(entity_id).await
 }
 
+#[deprecated]
 pub async fn get_entity(
     api_path: &str,
     entity_id: &str,
@@ -301,6 +383,7 @@ pub async fn get_entity(
     RemoteTripleStore(api_path.to_string()).get_entity(entity_id).await
 }
 
+#[deprecated]
 pub async fn get_spatial_entity(
     api_path: &str,
     entity_id: &str,
