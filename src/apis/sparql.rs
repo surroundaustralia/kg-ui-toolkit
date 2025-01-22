@@ -90,6 +90,7 @@ pub struct Response<B> {
 pub trait TripleStore {
     async fn get_activity(&self, activity_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
         self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 SELECT DISTINCT ($input AS $activity) ?p ?plabel ?o ?olabel
 WHERE {
     $input  ?p ?o .
@@ -103,6 +104,7 @@ WHERE {
     }
     async fn get_agent(&self, agent_id: &str) -> Result<Response<ObjectBinding>, gloo_net::Error> {
         self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 SELECT ($input AS $agent) ?p ?plabel ?o ?olabel
 WHERE {
     $input  ?p ?o .
@@ -116,8 +118,9 @@ WHERE {
     }
     async fn get_dim_desc(&self, entity_id: &str) -> Result<Response<DimDescBinding>, gloo_net::Error> {
         self.query_with("prefix dim:     <https://surroundaustralia.com/models/datadimensions/>
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 prefix sdo:    <https://schema.org/>
-SELECT DISTINCT ?targetRange ?name?order ?dimRange
+SELECT DISTINCT ?targetRange ?name ?order ?dimRange
 WHERE
 {
     $input dim:value ?dv .
@@ -132,11 +135,12 @@ WHERE
     }
     async fn get_dim_values(&self, entity_id: &str) -> Result<Response<DimValueBinding>, gloo_net::Error> {
         self.query_with("prefix dim:     <https://surroundaustralia.com/models/datadimensions/>
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 prefix sdo:    <https://schema.org/>
 SELECT ?d ?v
 WHERE
 {
-    $object dim:value ?dv .
+    $input dim:value ?dv .
     ?dv sdo:value ?v .
     ?dv dim:dimension/rdfs:label ?d .
     # ?d rdfs:label ?l
@@ -149,9 +153,9 @@ WHERE
         self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
 prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 prefix geo:    <http://www.opengis.net/ont/geosparql#>
-SELECT $entity ?p ?plabel ?o ?olabel ?blankNodeLabel
+SELECT ($input AS $entity) ?p ?plabel ?o ?olabel ?blankNodeLabel
 WHERE {
-    $entity  ?p ?o .
+    $input  ?p ?o .
     OPTIONAL { ?p rdfs:label ?plabel }
     OPTIONAL { ?o rdfs:label ?olabel }
     FILTER ( ?p != geo:hasGeometry )
@@ -163,13 +167,14 @@ WHERE {
     }
     async fn get_spatial_entity(&self, entity_id: &str) -> Result<Response<SpatialEntityBinding>, gloo_net::Error> {
         self.query_with("prefix prov: <http://www.w3.org/ns/prov#>
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 prefix geo:    <http://www.opengis.net/ont/geosparql#>
-SELECT $entity ?label  ?geojson ?wkt
+SELECT ($input AS $entity) ?label  ?geojson ?wkt
 WHERE {
-    $entity geo:hasGeometry ?g .
+    $input geo:hasGeometry ?g .
     OPTIONAL { ?g geo:asGeoJSON ?geojson }
     OPTIONAL { ?g geo:asWKT ?wkt }
-    OPTIONAL { $entity rdfs:label ?label }
+    OPTIONAL { $input rdfs:label ?label }
 }", entity_id).await
     }
     async fn query<T: for<'a> Deserialize<'a>>(&self, sparql: &str) -> Result<Response<T>, gloo_net::Error> {
@@ -307,7 +312,8 @@ pub fn load_test_triplestore() -> Oxigraph {
 impl TripleStore for Oxigraph {
     async fn query_with<T: for<'a> Deserialize<'a>>(&self, sparql: &str, param: &str) -> Result<Response<T>, gloo_net::Error> {
         // Quite hacky until next release of Oxigraph, but should be safe!
-        match self.0.query(&sparql.replace("$input", &("<".to_owned() + &param.replace(">", "%3E") + ">"))) {
+        let rewritten_query = sparql.replace("$input", &("<".to_owned() + &param.replace(">", "%3E") + ">"));
+        match self.0.query(&rewritten_query) {
             Ok(QueryResults::Solutions(solutions)) => {
                 let mut buf = Vec::new();
                 let serializer = QueryResultsSerializer::from_format(QueryResultsFormat::Json);
@@ -320,7 +326,7 @@ impl TripleStore for Oxigraph {
                                     return Err(GlooError(format!("Serialization error: {e}")));
                                 }
                             }
-                            Err(e) => return Err(GlooError(format!("Query error: {e}")))
+                            Err(e) => return Err(GlooError(format!("Query result error '{rewritten_query}': {e}")))
                         }
                     }
                     if let Err(e) = json_serializer.finish() {
@@ -336,7 +342,7 @@ impl TripleStore for Oxigraph {
                 }
             }
             Ok(_) => Err(GlooError("Unexpected response format!".to_string())),
-            Err(e) => Err(GlooError(format!("Query error: {e}")))
+            Err(e) => Err(GlooError(format!("Query error '{rewritten_query}': {e}")))
         }
     }
 }
