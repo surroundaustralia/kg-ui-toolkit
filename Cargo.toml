@@ -19,4 +19,4 @@ serde_json = { workspace = true }
 web-sys = { workspace = true, features = [ "HtmlAnchorElement" ] }
 yew = { workspace = true, features = ["csr"] }
 yew-chart = { workspace = true }
-oxigraph = { version = "*", default-features = false }
+oxigraph = { git = "https://github.com/OpenWork-NZ/oxigraph.git", rev="92a4beee5138b0981cf65fec5a8e90fc1166f463", version = "*", default-features = false }
